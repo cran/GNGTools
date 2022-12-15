@@ -1,0 +1,1342 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+<meta name="date" content="2022-12-14" />
+
+<title>GNG Tools</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+
+
+<style type="text/css">
+  code {
+    white-space: pre;
+  }
+  .sourceCode {
+    overflow: visible;
+  }
+</style>
+<style type="text/css" data-origin="pandoc">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">GNG Tools</h1>
+<h4 class="date">2022-12-14</h4>
+
+
+
+<div id="intro" class="section level1">
+<h1>Intro</h1>
+<p>Decision-making is critical throughout drug development, especially
+when establishing Proof of Concept (POC; e.g., phase 2) to enable large
+scale confirmatory programs (e.g., phase 3), which is critical for both
+the sponsor and the patients due to high stakes involved. However, it is
+noted that an initial POC finding may not be confirmed by later
+confirmatory trials. Historically, failure rates in confirmatory trials
+have been reported to be as high as 50%, with two-thirds of failures
+possibly attributed to poorly designed POC and unstructured End of POC
+decision making paradigms [1, 2, 3]:</p>
+<ul>
+<li>Traditionally, clinical trials, including POC trials, were designed
+to achieve statistical significance (i.e., oriented by individual trial
+success). With the limited scope in POC trials, such designs may result
+in the lack of evidence to inform a drug’s commercial viability and the
+ability to fulfill unmet medical needs – which may result in an
+unsuccessful confirmatory program.</li>
+<li>In addition, the sponsor normally had to wait until the end of a POC
+trial to review the evidence for a GO decision to proceed to
+confirmatory trials. The prolonged overall development timeline may lead
+to delayed fulfillment of unmet medical needs.</li>
+</ul>
+</div>
+<div id="go-no-go" class="section level1">
+<h1>Go / No-Go</h1>
+<p>Starting with the end in mind, the QED framework aims at designing
+the POC trials to assist with decision making at the close of the trial
+and a potential accelerated decision while evidence accumulates. The
+decision criteria employed a modified version of the one presented in
+Pulkstenis et al. (2017) [5].</p>
+<p>Let <span class="math inline">\(\Delta\)</span> be a single-valued
+parameter associated with the treatment effect, the proposed decision
+criteria link <span class="math inline">\(\Delta\)</span> with the
+compound/project-specific Target Product Profile (TPP) to determine
+where the compound shall be positioned to fulfill medical and commercial
+needs might also be considered. In order to weigh both
+external/historical data and POC results, a Bayesian framework is
+naturally utilized to quantify how likely the compound will meet the
+TPP. We denote:</p>
+<ul>
+<li><span class="math inline">\(TPP_{Min}\)</span> as the minimal TPP,
+defined as the minimal treatment effect for acceptable efficacy or the
+‘dignity line’, and</li>
+<li><span class="math inline">\(TPP_{Base}\)</span> as the base TPP,
+defined as the base level of efficacy corresponding to the treatment
+effect for solid competitiveness or a change to standard of care.</li>
+</ul>
+<table>
+<caption>Decision Rule Form</caption>
+<colgroup>
+<col width="18%" />
+<col width="81%" />
+</colgroup>
+<thead>
+<tr class="header">
+<th>Decision</th>
+<th>Criteria</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Go</td>
+<td><span class="math inline">\(P(\Delta \geq TPP_{Min} &gt;
+\tau_{Min})\)</span> &amp; <span class="math inline">\(P(\Delta \geq
+TPP_{Base} &gt; \tau_{Base})\)</span></td>
+</tr>
+<tr class="even">
+<td>No-Go</td>
+<td><span class="math inline">\(P(\Delta \geq TPP_{Min} &gt;\leq
+\tau_{NoGo})\)</span> &amp; <span class="math inline">\(P(\Delta \geq
+TPP_{Base} \leq \tau_{Base})\)</span></td>
+</tr>
+<tr class="odd">
+<td>Consider</td>
+<td>Otherwise</td>
+</tr>
+</tbody>
+</table>
+<p>Note that the posterior probability thresholds <span class="math inline">\(\tau_{Base}\)</span>, <span class="math inline">\(\tau_{Min}\)</span> and <span class="math inline">\(\tau_{NoGo}\)</span> are pre-specified parameters,
+which collectively represent the company’s risk tolerance level and are
+to be determined by the study team through considerations of the
+operating characteristics</p>
+</div>
+<div id="interim-decision-making" class="section level1">
+<h1>Interim Decision making</h1>
+<p>As mentioned earlier, in many clinical development programs, the POC
+study may only serve to guide the decision-making of whether we would
+proceed to the next stage of programs or not. The non-confirmatory
+nature of a POC study may enable an interim monitoring mechanism within
+this study, to accelerate the planning future program (e.g., initiate
+the planning for protocol design and regulatory interactions). These
+activities may shorten the overall development timeline, which can be
+critical in scenarios with unmet medical needs and/or with an
+increasingly competitive landscape. To be clear, a conclusion to
+‘Accelerate development’ does not imply any changes to the conduct to
+the on-going study.</p>
+<p>In the present framework, the decision criteria employed at an
+interim extend the Bayesian framework by appealing to the posterior
+predictive probability that the data available at the end of POC (e.g.,
+end of phase 2 [EOP2]) will meet the study end criteria specified above.
+This predictive probability conditions on the historical evidence
+(priors) and specifications of posterior predictive probability
+threshold for an acceleration to the next phase (e.g., phase 3)
+development, <span class="math inline">\(\pi_{Go}\)</span>. In
+particular, with interim monitoring we declare the following decision
+criteria:</p>
+<table>
+<caption>Interim Decision-making</caption>
+<thead>
+<tr class="header">
+<th><strong>Decision</strong></th>
+<th>Criteria at interim</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Accelerate Development</td>
+<td>P(Study-end Go Criteria met) &gt; <span class="math inline">\(\pi_{Go}\)</span></td>
+</tr>
+<tr class="even">
+<td>Wait for study-end</td>
+<td>Otherwise</td>
+</tr>
+</tbody>
+</table>
+<p>In special cases such as facilitating downstream evaluation for
+out-licensing possibilities, an early decision not to proceed to the
+next phase may also be considered. If so, one may consider the posterior
+predictive probability threshold <span class="math inline">\(\pi_{NoGo}\)</span> to fulfill such needs. In our
+QED dashboards, this threshold value is set to null as the default
+setting but is capable to be activated to fulfill special needs.</p>
+<p>Specifically, Monte Carlo simulations or direct calculation are
+employed to estimate these posterior predictive probabilities. Analogous
+to the posterior probability thresholds employed at the study-end, the
+posterior predictive probability threshold of <span class="math inline">\(\pi_{Go}\)</span> at interim monitoring is also
+pre-specified and needs to be calibrated by the statistician</p>
+</div>
+<div id="operating-characteristics" class="section level1">
+<h1>Operating Characteristics</h1>
+<p>Once the Min and Base TPP and priors have been identified, the
+statistician should work closely with the study team to propose initial
+posterior probability threshold values that meet the team’s risk
+tolerance. In a Bayesian framework, the posterior probabilities are
+highly dependent on the amount of information available, which
+translates to the POC sample size and the timing of interim monitoring.
+Therefore, the posterior probability thresholds <span class="math inline">\(\tau_{Base}\)</span>, <span class="math inline">\(\tau_{Min}\)</span> and <span class="math inline">\(\tau_{NoGo}\)</span> at the study-end, as well as
+<span class="math inline">\(\pi_{Go}\)</span> at interim monitoring (if
+applicable), shall be thoroughly evaluated and determined before the POC
+trial conduct to reflect the company’s risk tolerance level, and to
+optimize the parameter selection specifically under each design option.
+The statistician will also find it helpful to appeal to the Study-end
+Rule in Action tab. This tab helps the team understand what the minimum
+[maximum] observed treatment effect is to declare a Go [No-Go] at
+study-end. This provides an analog to the minimum detectable effect size
+one might provide to support sample size/power discussions.</p>
+<p>Using simulations, we quantify this optimization process by the
+operating characteristics (OC) of the decision criteria. Specifically,
+we evaluate:</p>
+<ul>
+<li>OC against treatment effect: What the probability is to make a
+Go/No-Go decision under a specific sample size, when the underlying
+treatment effect is below, around, or above the TPPs.</li>
+<li>OC against sample size: Whether the probability of making a Go/No-Go
+decision is sensitive to a sample size increase/decrease.</li>
+<li>OC against interim monitoring: What the overall probability is to
+make a Go/No-Go decision, with interim monitoring at different
+timing.</li>
+</ul>
+</div>
+<div id="case-study-1" class="section level1">
+<h1>Case study 1</h1>
+<p>Case Study 1 - Two-Sample Binary Case Let us work with the following
+assumptions (of note, these assumptions/parameters shall be determined
+cross-functionally):</p>
+<ul>
+<li>Min TPP [Base TPP]: treatment difference = 15% [30%]</li>
+<li>Posterior Probability Thresholds: <span class="math inline">\(\tau_{Min} = 80%, \tau_{Base} = 10%, \tau_{NoGo} =
+65%\)</span></li>
+<li>Hyperparameters: Uniform priors (<span class="math inline">\(\alpha_c = \beta_c = \alpha_T = \beta_T =
+1\)</span>)</li>
+<li>Alternative hyperparameters: Jeffreys priors (<span class="math inline">\(\alpha_c = \beta_c = \alpha_T = \beta_T =
+1\)</span>)</li>
+<li>Observed data at study-end: <span class="math inline">\(n_C=40,
+x_C=9, n_T=40, x_T=17\)</span></li>
+</ul>
+<p>In this example, we wish to contrast the operating characteristics of
+the Jeffreys and Uniform priors in order to make the reader aware that
+these priors can lead to different conclusions. We do not advocate the
+use of one of these priors over another. Instead, we advocate a review
+of operating characteristics to understand if there are practical
+advantages to choosing one prior over the other. The interested reader
+may find more discussion on the use of Jeffreys and Uniform priors in
+[7, 8]. Additionally, we discuss the incorporation of historic
+information in Section 6.3.</p>
+<div id="rule-in-action-plot-with-uniform-priors" class="section level2">
+<h2>Rule in action plot with uniform priors</h2>
+</div>
+<div id="rule-in-action-plot-with-jeffreys-priors" class="section level2">
+<h2>Rule in action plot with Jeffreys’ priors</h2>
+</div>
+</div>
+<div id="study-end-decision-rule" class="section level1">
+<h1>Study-end decision rule</h1>
+<p>In this example, when uniform priors are utilized for the control and
+treatment response rates, the decision-rule leads to a ‘Consider’
+conclusion for the Phase II data entered. We are also alerted that the
+decision rule declares Go with 19 or more responders and No-Go with 16
+or less responders. Had the Jeffreys prior been used, we would find that
+rule requires the same observed data for Go and No-Go decisions.
+Incidentally, if one updates the value τ_Base = 28%, one finds that
+rules based on Jeffreys prior and Uniform prior differ, requiring 19 and
+20 responders respectively for a Go. (Try it!)</p>
+<p>Of note, the exercise may be repeated if the team is considering
+alternate priors (say, for sensitivity assessments), especially when
+historical data are available to construct informative priors.</p>
+<p>The reported decision interval flexes on the basis of how P(Δ ≥ Base
+TPP) compares to <span class="math inline">\(\tau_{Base}\)</span>.</p>
+<ul>
+<li>When <span class="math inline">\(P(\Delta ≥ Base TPP) &gt;
+\tau_{Base}\)</span> the decision interval reported is the asymmetric
+credible region with left tail coverage probability (1 - <span class="math inline">\(\tau_{Min}\)</span>) and right tail coverage
+probability (<span class="math inline">\(\tau_{Base}\)</span>)). I.e.,
+the tail probabilities focus on those threshold associated with End of
+POC ‘Go’ criteria.</li>
+<li>When <span class="math inline">\(P(\Delta ≥ Base TPP) \leq
+\tau_{Base}\)</span> the decision interval reported is the asymmetric
+credible region with left tail coverage probability (1 - <span class="math inline">\(\tau_{NoGo}\)</span>) and right tail coverage
+probability (<span class="math inline">\(\tau_{Base}\)</span>). I.e.,
+the tail probabilities focus on those threshold associated with End of
+POC ‘No-Go’ criteria.</li>
+<li>The motivation for this flexing decision interval is to provide a
+quick visual confirmation of the decision given the data.When a ‘No-Go’
+decision is arises, the reported decision interval has an upper bound
+that is less than the Base TPP, while the lower bound of the interval
+extends below the Min TPP.</li>
+<li>Conversely, when a ‘Go’ decision arises, the reported decision
+interval has a lower bound that is greater than the Min TPP, while the
+upper bound of the interval extends above the Base TPP.</li>
+<li>Otherwise, the decision falls into the “Consider” zone.</li>
+</ul>
+<div id="study-end-decision-for-this-example" class="section level2">
+<h2>Study-end decision for this example</h2>
+<p>Once the Min and Base TPP and priors have been identified the
+statistician should work closely with the study team to propose initial
+posterior probability threshold values that meet the team’s risk
+tolerance. Clinical knowledge and an understanding of the team’s risk
+tolerance are leveraged to identify thresholds that reflect the team’s
+expectation regarding what should be required for Go and No-Go decisions
+in terms of observed data.</p>
+<p>Note: In order to identify posterior probability thresholds for the
+study-end decision, users are encouraged to iterate between the
+Study-end Rule in Action tab, which provides information about what is
+required of the data in order to meet Go/No-Go as well as the
+corresponding treatment effect operating characteristics, which provides
+the likelihood of achieving Go/No-Go when the underlying control group’s
+response rate is held fixed and treatment effect increases (see the next
+section).</p>
+</div>
+</div>
+<div id="treatment-effect-oc" class="section level1">
+<h1>Treatment effect OC</h1>
+<p>Let us work with the following assumptions: • Control rate: 22% •
+Randomization ratio: 1 so that (Control:Treatment) = (1 : TRT) = 1:1 –
+If treatment sample size is twice [half] of control sample size use 2
+[0.5].</p>
+<p>We see that when the underlying control responder rate is 22%, a
+treatment effect of 15% (equivalent to treatment responder rate of 22% +
+15% = 37%), the likelihood of a Go decision at study end is less than
+20%. As the treatment effect increases to 30%, the likelihood of a Go
+decision at study end increases to roughly 75%. This figure provides the
+same information as the previous picture, although it is arguable easier
+to pick off each of values from the y-axis for each decision type.</p>
+<div id="treatment-effect-oc-for-this-example" class="section level2">
+<h2>Treatment effect OC for this example</h2>
+</div>
+</div>
+<div id="sample-size-oc" class="section level1">
+<h1>Sample size OC</h1>
+<p>Similarly, we’d also like to evaluate the sample size operating
+characteristics, which provides the likelihood of achieving Go/No-Go
+when the underlying effect in both groups are held at fixed scenarios
+and the sample size increases.</p>
+<p>Let us work with the following assumptions:</p>
+<ul>
+<li>Control rate: 22%</li>
+<li>Randomization ratio: 1 so that (Control:Treatment) = (1 : TRT) =
+1:1</li>
+<li>User defined effect of interest: 25%</li>
+<li>Lower [Upper] Bounds to be shown on the graph: 40 [160]</li>
+<li><span class="math inline">\(n_{points}\)</span> = 15</li>
+</ul>
+<p>Note the number of points, <span class="math inline">\(n_{points}\)</span>, is used to span the sample
+size to be simulated between the Lower and Upper bounds, which increases
+computation time to create the OC curves. It is recommended the user
+work with a smaller number of points, with bounds chosen to reflect
+extremes being considered.</p>
+<div id="sample-size-figure-for-this-example" class="section level2">
+<h2>Sample size figure for this example</h2>
+<p>The figure allows one to assess how the likelihood of decisions
+change as a function of total sample size. The User defined effect
+represents any special value of interest (if any), which complements the
+default output that sets the treatment effect to 0 (Null case) and the
+Min and Base TPP values.</p>
+</div>
+</div>
+<div id="interim-decision-heatmap" class="section level1">
+<h1>Interim Decision Heatmap</h1>
+<p>In practice, the assumptions and parameters are determined
+cross-functionally with the statistician leading such discussions. Let
+us work with the following assumptions. * As noted in Section 3.0, by
+default, the ‘Do not Accelerate threshold’ is left unchecked, as this
+function is only kept to fulfill the potential needs in special
+situations where an early decision not to proceed to the next phase may
+be considered. * Thresholds for posterior predictive probabilities:
+<span class="math inline">\(\pi_{Go}\)</span> = 80% (See note below.) *
+No threshold is defined for a ‘do not accelerate threshold’, the default
+value as discussed in section 3.0. * Planned maximum sample size:
+Control: 40, Treatment: 40 * Planned interims: Set control and treatment
+sample sizes to: 11, 20, 26</p>
+<div id="interim-decision-heatmap-for-this-example" class="section level2">
+<h2>Interim Decision heatmap for this example</h2>
+<p>Suppose at the 2nd interim we observe 5 successes in the control
+group out of 20. The figure then informs: 12 or greater success (60%)
+would lead to a Go. The user should check this vs. study-end
+requirements:</p>
+<p>Relative to study end, we see that the 2nd interim requires more
+stringent evidence (in terms of demanding a smaller observed treatment
+sample proportion) for a No-Go (35% vs. 40%) and also more stringent
+evidence (in terms of greater observed treatment sample proportion) for
+a Go (60% vs. 47.5%). This is as expected, since we’d like to have more
+stringent criteria to accommodate the variability from pre-mature data
+at the interim. The user can calibrate the Go with the help of the
+treatment operating characteristics offered next. A note on the choice
+of thresholds for posterior predictive probabilities: Please remember
+that this posterior predictive probability is associated with the
+probability (given prior and interim data) that the study-end Go
+Criteria is met. It behooves the statistician to a) determine what sorts
+of observed data leads to achieving such posterior predictive
+probabilities at the interims and b) what impact that observed data
+might have on the probability of subsequent confirmatory trial success.
+In other words, in addition to the consideration of a risk tolerance
+level regarding a discrepant decision at interim against as if a
+decision is to be made at the end of POC, there could be additional
+impacts to the downstream confirmatory study design (based on assumption
+from interim instead of final POC data). For example, an exercise
+designed to determine the sample size of confirmatory trial might
+include comparisons of:</p>
+<ul>
+<li>Power vs. Sample size under current assumptions</li>
+<li>Probability of success (i.e., power averaged over the team’s current
+POC prior) in the confirmatory trial made at POC design stage, interim,
+and end of POC along with accumulated POC data.</li>
+</ul>
+<p>In short, the statistician should be cognizant of the impact an early
+Go decision might have on subsequent uses of the POC data.</p>
+</div>
+</div>
+<div id="operating-characteristics-as-a-function-of-treatment-effect-with-interim-decision" class="section level1">
+<h1>Operating Characteristics as a Function of Treatment Effect with
+Interim Decision</h1>
+<p>The first figure offered contrasts the operating characteristics at
+study end vs. any analysis. Note that the study end components of these
+figures are run independently of those from the treatment OC tab, so
+expect to see minor differences. Increasing the number of simulations
+should ameliorate the differences at the cost of computation time. The
+dotted line in this figure provides operating characteristics associated
+with ‘Any analyses. This should be interpreted in a way that respects
+the chronology of the analyses and contrasted with the description
+offered in the next subsection: The first analysis which leads to a
+definitive conclusion (such as ‘Accelerate’ at an interim or ‘Go’ at
+study end) dictates the outcome of this analysis. In this way, the
+study-end results are called on only when each interim has returned a
+consider. Said differently, subsequent analyses never ‘overrule’ a
+definitive call from earlier interim monitoring.</p>
+<div id="interim-graphics" class="section level2">
+<h2>Interim graphics</h2>
+<div id="treatment-effect-operating-curves-by-each-analysis" class="section level3">
+<h3>Treatment Effect Operating Curves by Each Analysis</h3>
+<p>These figures offer a view of how interim monitoring performs in
+isolation; additionally, Study End results are viewed in isolation. The
+results for ‘Any Interim’ and ‘Any Analysis’ follow along lines
+previously described, in that it is the first non-Consider decision that
+drives classification.</p>
+<p>Some common features that are expected in such figures: * Interims
+with smaller sample sizes, will typically have lower probability of an
+‘accelerate’ result. * ‘Any interim’ will have a higher probability of
+‘Accelerate’ compared to individual interims (which are evaluated
+without regard for other interims). The figure below provided the same
+information as the previous figure in a different presenting mode (i.e.,
+separate instead of stacked probabilities).</p>
+</div>
+</div>
+</div>
+<div id="two-sample-continuous-case" class="section level1">
+<h1>Two-sample continuous case</h1>
+<p>In this example, suppose we have prior information for control worth
+10 observations. This is reflected both in our use of the normal-gamma’s
+effective sample size, n_0,C = 10, and gamma parameters, αC = 2.5, C =
+10 below. Additionally assume we wish to have a non-informative prior
+for treatment mean, and a relatively uninformative prior for the
+precision, n_0,T = 0.0001, αT = 0.25, βT = 1.0. (It is worth noting that
+the gamma portions for the control and treatment share the same expected
+value, but with different variances.) In this way, let us work with the
+following assumptions:</p>
+<ul>
+<li>Min TPP: treatment difference = 1.5</li>
+<li>Base TPP: treatment difference = 3.0</li>
+<li>Thresholds: <span class="math inline">\(\tau_{Min} = 80%,
+\tau_{Base} = 20%, \tau_{NoGo} = 65%\)</span></li>
+<li>Hyperparameters for Control: <span class="math inline">\(\mu_{0,C}=0, n_{0,C} = 10, \alpha_C = 2.5, \beta_C
+= 10\)</span>,</li>
+<li>Hyperparameters for Treatment: <span class="math inline">\(\mu_{0,T}=0, n_{0,T} = 0.0001, \alpha_T = 0.25,
+\beta_T = 1.0\)</span></li>
+<li>Observed data: <span class="math inline">\(\bar{x}_C=1.4, s_C=4,
+n_c=40, \bar{x}_{T}=3.25, s_t=4, n_T=40\)</span></li>
+</ul>
+<div id="joint-priorposterior" class="section level2">
+<h2>Joint prior/posterior</h2>
+<p>A series of figures assist the user with specification of the prior
+hyperparameters. The joint densities for prior/posterior normal-gamma
+distributions are offered.</p>
+<p>The marginal t-distributions obtained from integrating out the
+precision terms are offered.</p>
+<p>Additional figures not provided here include:</p>
+<ul>
+<li>Marginal precision plots based on gamma distributions</li>
+<li>Prior precision, variance and standard deviation plots are offered
+to help translate intuition associated with standard deviation into the
+precision scale.</li>
+<li>Finally, numeric summaries are offered.</li>
+</ul>
+</div>
+</div>
+<div id="study-end-rule-in-action" class="section level1">
+<h1>Study-end rule in action</h1>
+<p>The Study-end Decision Rule in Action plot in this case is based on
+Monte Carlo integration of the treatment differences obtained by
+considering the differences obtained between draws from marginal
+t-distributions associated with the control and treatment arms.</p>
+<p>Note that this plot is conditional on the data entered for the
+control group Phase II data. The subtitle suggests, holding control data
+and treatment sample size and variability fixed, a treatment mean of
+2.53 or larger is needed for Go while a treatment mean of 1.1 or less is
+needed for No-Go. The amounts to an observed difference of 2.53 - (-0.5)
+= 2.83 and (1.1 - (-0.5)) = 1.6 (again, assuming the same control data
+is encountered).</p>
+<p>The actual observed treatment effect (i.e., the difference of
+observed sample means between treatment and control) required for a
+Go/No-Go is influenced by hyperparameters and observed data from the
+control group. Recall that by stipulating $n_{0,C} = n_{0,T} = 1, we
+impart an informative prior on the mean. You will notice that lines are
+not parallel in the figure. For purpose of exaggerating the effect,
+consider the impact of replacing $n_{0,C} = n_{0,T} = 10. This is akin
+to suggesting that we have evidence that the mean in each group is equal
+to <span class="math inline">\(\mu_{0,C}=\mu_{0,T}=0\)</span> and this
+evidence is worth 10 observations on each group. As a result of using an
+informative prior, we can see from the Study-end GNG plot that as
+observed control mean increases from -2, to 5.5, the required observed
+treatment effect to make a GO decision decreases from values larger than
+3.6 to values closer to 2.0.</p>
+<p>If a non-informative prior is used (take <span class="math inline">\(n_{0,C} = n_{0,T} = 0.0001\)</span>) then we would
+observe parallel lines in graphs, suggesting that the observed control
+mean plays no role in the observed treatment effect required for Go and
+No-Go. (Try it!)</p>
+</div>
+<div id="treatment-effect-oc-1" class="section level1">
+<h1>Treatment effect OC</h1>
+<p>Let us work with the following assumptions:</p>
+<ul>
+<li>Randomization ratio: 1 (Control:Treatment = 1:TRT) for equal
+randomization</li>
+<li>Control Mean: 0.25</li>
+<li><span class="math inline">\(s_C\)</span>: 1.5, <span class="math inline">\(s_T\)</span>: 1.5</li>
+<li>$n_{points}: 15, MC size: 1000</li>
+<li>Total Sample Size: 55</li>
+<li>Lower Bound: 0.5, Upper Bound: 4</li>
+</ul>
+</div>
+<div id="sample-size-oc-1" class="section level1">
+<h1>sample size OC</h1>
+<p>Let us work with the following assumptions:</p>
+<ul>
+<li>User’s TPP: 2.5</li>
+<li>Lower [Upper] sample size bounds: 40 [120]</li>
+</ul>
+<p>It is important to recall that the Go and No-Go decisions are based
+by applying thresholds to posterior probabilities. As a function of
+sample size, the posterior probabilities may tend towards 0%, 100% or
+some value in between. It is important not to project expectations we
+have associated with notions of power to such a figure.</p>
+</div>
+<div id="operating-characteristics-as-a-function-of-treatment-effect-with-interim-decision-1" class="section level1">
+<h1>Operating Characteristics as a Function of Treatment Effect with
+Interim Decision</h1>
+<p>For demonstration purposes, we also considered an accelerated
+decision of not proceeding to the next phase (i.e., <span class="math inline">\(\pi_{No-Go}\)</span>) in this example. Let us work
+with the following assumptions:</p>
+<ul>
+<li>Check the box: Add ‘Do not Accelerate’ threshold</li>
+<li>Interim threshold for Go and No-Go: <span class="math inline">\(\pi_Go = 60%, \pi_{No-Go} = 60%\)</span></li>
+<li>Planned maximum sample size: <span class="math inline">\(n_C = n_T =
+55\)</span></li>
+<li>Planned interims (Common for Control and Treatment): (18, 27,
+36)</li>
+<li>Underling control mean: 0.25</li>
+<li>Control SD: 1.5, Treatment SD: 1.5</li>
+<li><span class="math inline">\(n_points\)</span> for Look-up table: 20
+<ul>
+<li>Step size for lookup table. The smaller the step size, the greater
+precision in determining study-end Go and No-go cutoffs.</li>
+</ul></li>
+<li>MC size for Look-up Table: 500
+<ul>
+<li>Number of MC trials used when estimating the look-up table.</li>
+</ul></li>
+<li><span class="math inline">\(n_points\)</span> for Simulation: 30
+<ul>
+<li>The number of points over the simulation grid to run simulations.
+The larger the number of points, the longer the calculation time.</li>
+</ul></li>
+<li>MC size for simulation: 1000
+<ul>
+<li>The number of trials run at each simulation point.</li>
+</ul></li>
+</ul>
+<p>Since the observed treatment effect required for Go and No-Go may
+change depending on choice of hyperparameters and assumed control group
+mean, a figure augmenting OC curves when treatment effect is set to
+user’s control mean ± control standard deviation is provided. (Recall:
+under a non-informative prior, these should be similar. Under a
+non-informative prior, this figure can help determine if <span class="math inline">\(n_points\)</span> for look-up table, <span class="math inline">\(n_points\)</span> for simulation, and their
+corresponding MC sizes are sufficiently large.) The following figure
+reflects the 2nd figure offered by the Shiny application. The 1st
+figure, provides a focused view of the center panel which reflects the
+user’s choice of underlying control mean.</p>
+<p>Finally, we provide one of two versions of the treatment effect OC
+curves providing a variety of views: OCs at each interim and Study-end
+(without regard for other analyses), and OCs for Any Interim and Any
+Analysis which are based on the first interim analysis that leads to an
+‘Accelerate’ or ‘Do not Accelerate’ conclusion at an interim based on
+exceeding predictive probabilities thresholds, or in the case where all
+interims have us continue, the Study-end decision based on posterior
+probabilities.</p>
+</div>
+<div id="working-with-hrs-1" class="section level1">
+<h1>Working with HRs &gt; 1</h1>
+<p>The time-to-event functions are set up to handle the standard case
+where hazard ratios less than 1 indicate efficacy. Suppose instead a
+team has preference to Go for larger HR values and No-go for small HR
+values. Consider the following example where the Base TPP = 1.4 and the
+Min TPP = 1.2 on the HR scale.</p>
+<p>First transform the problem by interchanging role of PBO and TRT.
+This converts as follows:</p>
+<ul>
+<li>Base TPP –&gt; Base HR = 1/1.4 = .714 and,</li>
+<li>Min TPP –&gt; Max TPP = 1/1.2 = 0.833</li>
+</ul>
+<p>Next, working with the decision rule in this setting as we normally
+would lead to</p>
+<ul>
+<li>Go if: <span class="math inline">\(P(HR \leq 0.833) &gt;
+\tau_{Max}\)</span> &amp; <span class="math inline">\(P(HR &lt; 0.714)
+&gt; \tau_{Base}\)</span> and</li>
+<li>No-Go if: <span class="math inline">\(P(HR ≤0.833) \leq
+\tau_{No-Go}\)</span> &amp; <span class="math inline">\(P(HR &lt; 0.714)
+\leq \tau_{Base}\)</span></li>
+</ul>
+<p>We can communicate this rule in terms of the team’s preferred scale
+as follows:</p>
+<p>Go if: <span class="math inline">\(P(HR \leq 0.833) = P(1/HR &gt;
+1.2) &gt; \tau_{Max} &amp; P(HR &lt; .714) = P(1/HR ≥ 1.4) &gt;
+\tau_{Base}\)</span> No-Go if: <span class="math inline">\(P(HR \leq
+0.833)\)</span> = <span class="math inline">\(P(1/HR &gt; 1.2) \leq
+\tau_{No-Go}\)</span> &amp; <span class="math inline">\(P(HR &lt; .714)
+= P(1/HR ≥ 1.4) \leq \tau_{Base}\)</span></p>
+</div>
+<div id="borrowing-external-info" class="section level1">
+<h1>Borrowing external info</h1>
+<p>Several methods exist for implementing historic borrowing and many of
+these (e.g., use of dynamic power priors, creating synthetic controls
+from patient level data, robust meta-analytic priors) fall beyond the
+scope of the applications. When leveraging historical data, cautions
+should be used to accommodate the between trial variability. The user
+can, however, explore notions of historic borrowing with fixed
+discounting through specification of priors. In this way a user can
+explore the impact of prior specification on performance of rules.
+Additionally, such comparisons might augment internal confidence in a
+traditionally designed study. E.g., one might contrast performance of Go
+and No-Go rules using non-informative priors (which may be more aligned
+with how the study was designed) with performance of rules that leverage
+historic data via historic priors. Here we consider the use of
+informative priors for placebo arm only. Let p <span class="math inline">\(\in\)</span> [0, 1] be the fixed discounting
+percentage.</p>
+<div id="discounted-priors" class="section level2">
+<h2>Discounted priors</h2>
+<div id="binary-case" class="section level3">
+<h3>Binary Case</h3>
+<p>Suppose we have binary historic data from x responders among n
+subjects. We can envisage discounted priors by manipulating the sample
+size while maintaining the value of the sample proportion of responders
+x/(n – x).</p>
+<p>General Prior: <span class="math inline">\(Beta(\alpha,
+\beta)\)</span>. Discounted Borrowing: <span class="math inline">\(Beta(\alpha + px, \beta + p(n – x))\)</span></p>
+</div>
+<div id="continuous-case" class="section level3">
+<h3>Continuous Case</h3>
+<p>Suppose we have historic data from n subjects summarized by sample
+mean and sample standard deviation. We can envisage discounted priors by
+manipulating the sample size while maintaining the historic estimates
+for mean and standard deviation.</p>
+<p>General Prior: <span class="math inline">\(NG(\mu_0,n_0,\alpha_0,\beta_0 )\)</span>
+Discounted Borrowing: <span class="math inline">\(NG((n_0
+\mu_0+pn\bar{x})/(n_0+pn),n_0+pn,\alpha_0+pn/2,\beta_0+(pn-1)/2 s+(n_0
+pn(\barx-\mu_0 )^2)/(2(n_0+pn)))\)</span></p>
+<p>Time-to-event Case Suppose we have historic data providing an
+estimate of the hazard ratio based on m events. We can envisage
+discounted priors by manipulating the sample size while maintaining the
+historic estimates for the hazard ratio.</p>
+<p>General Prior: <span class="math inline">\(N(log(\widehat{HR})),
+4/m_{0})\)</span> Discounted Borrowing: <span class="math inline">\(N(log(\widehat{HR})), 4/(pm_{0} +m))\)</span></p>
+</div>
+</div>
+</div>
+<div id="distribution-theory" class="section level1">
+<h1>Distribution Theory</h1>
+<div id="distribution-theory-1" class="section level2">
+<h2>Distribution theory</h2>
+<div id="the-one-sample-binary-problem-with-beta-prior" class="section level3">
+<h3>The one-sample binary problem with beta prior</h3>
+<p>Let <span class="math inline">\(\theta_{TRT}\)</span> be the
+proportion of responders among the treated subjects in a one-arm trial
+and assume larger values of <span class="math inline">\(\theta_{TRT}\)</span> are associated with
+treatment benefit. Standard updating of conjugate prior is used:</p>
+<ul>
+<li>Prior: Let <span class="math inline">\(\pi(\theta_{TRT}) \sim
+Beta(\alpha_{TRT}, \beta_{TRT})\)</span>.</li>
+<li>Data: Assume that <span class="math inline">\(x\)</span> responders
+are observed among <span class="math inline">\(n\)</span> treated
+subjects.</li>
+<li>Posterior: <span class="math inline">\(\pi(\theta_{TRT} | x,n) \sim
+Beta(\alpha_{TRT} + x, \beta_{TRT} + (n-x))\)</span>.</li>
+</ul>
+<p>In general, decision rules based on the posterior distribution of
+<span class="math inline">\(\theta_{TRT}\)</span> are thus based on
+straightforward appeals to a Beta distribution. E.g., <span class="math inline">\(P(\theta &gt; \theta_{TV}| x, n)\)</span> can be
+computed readily. Indeed, a call to stats::pbeta is used by
+DecisionHeatMaps::get.binary.ss.df to return a data.frame holding
+posterior probabilities for subsequent heatmap production.</p>
+</div>
+<div id="two-sample-binary-problem-via-the-difference-in-population-proportions" class="section level3">
+<h3>Two-sample binary problem via the difference in population
+proportions</h3>
+<p>Consider a clinical trial comparing Treatment vs. Control. We wish to
+compare true response rates <span class="math inline">\(\pi_{PBO}\)</span> and <span class="math inline">\(\pi_{TRT}\)</span>. Let <span class="math inline">\(\theta = \pi_{PBO} - \pi_{TRT}\)</span>. As
+described above, priors for each component are given by beta
+distributions:</p>
+<ul>
+<li><span class="math inline">\(\pi(\pi_{PBO}) \sim Beta(\alpha_{PBO},
+\beta_{PBO})\)</span></li>
+<li><span class="math inline">\(\pi(\pi_{TRT}) \sim Beta(\alpha_{TRT},
+\beta_{TRT})\)</span></li>
+</ul>
+<p>Observed data on each arm arise from independent binomial
+experiments:</p>
+<ul>
+<li><span class="math inline">\(n = (n_{PBO}, n_{TRT})\)</span>: number
+of subjects on each arm of study</li>
+<li><span class="math inline">\(x = (x_{PBO}, x_{TRT})\)</span>: number
+of subjects that respond</li>
+</ul>
+<p>Individual posteriors are given by canonical updating of the
+conjugate beta prior with binomial data:</p>
+<ul>
+<li><span class="math inline">\(\pi(\pi_{PBO} | n_{PBO}, x_{PBO}) \sim
+Beta(\alpha_{PBO} + x_{PBO}, \beta_{PBO} + (n_{PBO} -
+x_{PBO}))\)</span></li>
+<li><span class="math inline">\(\pi(\pi_{TRT} | n_{TRT}, x_{TRT}) \sim
+Beta(\alpha_{TRT} + x_{TRT}, \beta_{TRT} + (n_{TRT} -
+x_{TRT}))\)</span></li>
+</ul>
+<p>Sverdlov et al. (2015) detail the direct probability calculations of
+the cumulative distribution function of the risk difference, <span class="math inline">\(\theta = \pi_{PBO} - \pi_{TRT}\)</span>, and note
+that:</p>
+<p><span class="math display">\[F_{\theta}(t) = P(\theta \leq t) =
+\begin{cases}
+  \int_{-t}^{1} F_{\pi_{PBO}}(t+u)f_{\pi_{TRT}}(u)du &amp; -1 \leq t
+\leq0;\\
+  \int_{0}^{1-t}F_{\pi_{PBO}}(t+u)f_{\pi_{TRT}}(u)du +
+\int_{1-t}^{1}f_{\pi_{TRT}}(u)du &amp; 0 \leq t \leq 1.
+\end{cases}\]</span></p>
+<p>which upon taking t = 0 simplifies to</p>
+<p><span class="math display">\[P(\pi_{PBO} \leq \pi_{TRT}) =
+\int_{0}^{1-t}F_{\pi_{PBO}}(t+u)f_{\pi_{TRT}}(u)du.\]</span></p>
+<p>See Sverdlov et al. for more on this derivation including a reference
+to Kawasaki et al. describing an analytic expression and derivations for
+the relative risk and odds ratio. The function
+DecisionHeatMaps::get.binary.ts.post, employed by
+DecisionHeatMaps::get.binary.ts.df, computes the posterior probability
+associated with the difference of two in proportions via MC
+sampling.</p>
+</div>
+</div>
+</div>
+<div id="one--and-two-sample-normal-problem-with-unknown-variance" class="section level1">
+<h1>One- and two-sample normal problem with unknown variance</h1>
+<p>We choose to work in the two-sample normal with unknown variance
+because we wish to embrace the Bayesian ideal of incorporating our
+uncertainty. As such, we should avoid the simplifying assumptions used
+for elementary statistical problems: The notion that we know the
+variance while making inference on the mean is best saved for the
+classroom. One should be forced to justify the assumption that variances
+are unknown and but equal: if our standing hypothesis is that drug
+should impact the mean and we are well aware of notions of non-response
+and non-compliance to drug the more reasonable assumption is variation
+across doses should not be common.</p>
+<div id="distribution-theory-for-one-sample-normal-gamma-case" class="section level2">
+<h2>Distribution theory for one-sample normal-gamma case</h2>
+<div id="likelihood-function" class="section level3">
+<h3>Likelihood function</h3>
+<p>Let <span class="math inline">\(D = {x_{1}, x_{2}, ...,
+x_{n}}\)</span> be an i.i.d. sample whose distribution, conditional on
+unknown mean <span class="math inline">\(\mu\)</span> and unknown
+precision <span class="math inline">\(\tau = \sigma^{-2}\)</span> is
+normal with likelihood expressed as:</p>
+<p><span class="math display">\[\pi(D|\mu, \tau) =
+\frac{1}{(2\pi)^{n/2}}\tau^{n/2}exp(-\frac{\tau}{2}\sum_{i=1}^{n}(x_{i}
+- \mu)^2)\]</span></p>
+</div>
+<div id="conjugate-prior-distribution" class="section level3">
+<h3>Conjugate prior distribution</h3>
+<p>The conjugate prior is the Normal-Gamma defined as:</p>
+<p><span class="math display">\[NG(\mu, \tau|\mu_{0}, n_{0}, \alpha_{0},
+\beta_{0}) = N(\mu|\mu_{0},
+precision=(n_{0}\tau)^{-1})Ga(\tau|\alpha_{0},
+rate=\beta_{0})\]</span></p>
+<p>Which can be expressed as</p>
+<p><span class="math display">\[NG(\mu, \tau|\mu_{0}, n_{0}, \alpha_{0},
+\beta_{0}) = \frac{1}{Z_{NG}}\tau^{\alpha_{0} -
+1/2}exp(-\frac{\tau}{2}[n_{0}(\mu-\mu_{0})^{2}+2\beta_{0}])\]</span></p>
+<p>where</p>
+<p><span class="math display">\[Z_{NG}(\mu_{0}, n_{0}, \alpha_{0},
+\beta_{0}) =
+\frac{\Gamma(\alpha_{0})}{\beta_{0}^{\alpha_{0}}}\left(\frac{2\pi}{n_{0}}\right)^{1/2}\]</span></p>
+</div>
+<div id="gaining-familiarity-with-the-normal-gamma-density" class="section level3">
+<h3>Gaining familiarity with the normal-gamma density</h3>
+<p>The function DecisionHeatMaps::dnorgam returns the density of the
+normal-gamma. Suppose that expected observed standard devatiations will
+be around 2, so that variance is around 4 and precision is around 0.25.
+(We should recall Jensen’s inequality here!) Recall that marginal
+distribution of the precision parameter is a gamma distribution. The
+expected values and variance of a gamma distribution with shape and rate
+parameters, <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> respectively, is given by:</p>
+<ul>
+<li><span class="math inline">\(E(X) =
+\frac{\alpha}{\beta}\)</span></li>
+<li><span class="math inline">\(Var(X) =
+\frac{\alpha}{\beta^2}\)</span></li>
+</ul>
+<p>The family of gamma distributions with expected values of 0.25 are
+thus given by Gamma(0.25c, c). These will lead to expected values of
+0.25 and variances of 0.25/c. The effective sample size together with
+choice of c combine to determine the peakedness of the Normal Gamma
+distribution. In order to gain familiarity with the normal-gamma prior,
+consider the following nine densities:</p>
+<ul>
+<li>NG(0, 0.1, 0.25c, 1c), c = 0.25, 1, 4</li>
+<li>NG(0, 1.0, 0.25c, 1c), c = 0.25, 1, 4</li>
+<li>NG(0, 10, 0.25c, 1c), c = 0.25, 1, 4</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>get.df <span class="ot">&lt;-</span> <span class="cf">function</span>(<span class="at">n0=</span>.<span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span>){</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  my.df <span class="ot">&lt;-</span> <span class="fu">expand.grid</span>(<span class="at">tau=</span><span class="fu">seq</span>(<span class="fl">0.1</span>,<span class="dv">1</span>,.<span class="dv">01</span>), <span class="at">mu=</span><span class="fu">seq</span>(<span class="sc">-</span><span class="dv">15</span>,<span class="dv">15</span>,.<span class="dv">01</span>))</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  my.df<span class="sc">$</span>dens <span class="ot">&lt;-</span> <span class="fu">dnorgam</span>(<span class="at">mu=</span>my.df<span class="sc">$</span>mu, <span class="at">tau=</span>my.df<span class="sc">$</span>tau, <span class="at">mu0=</span><span class="dv">0</span>, <span class="at">n0=</span>n0, <span class="at">a0=</span>a0, <span class="at">b0=</span><span class="dv">1</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  my.df<span class="sc">$</span>color <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">cut</span>((my.df<span class="sc">$</span>dens),<span class="dv">50</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  my.df<span class="sc">$</span>n0<span class="ot">=</span>n0</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  my.df<span class="sc">$</span>a0<span class="ot">=</span>a0</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  my.df<span class="sc">$</span>b0<span class="ot">=</span>b0</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">return</span>(my.df)</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>get.df1 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span>.<span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span>)</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>get.df2 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span>.<span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span><span class="sc">*</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span><span class="sc">*</span>.<span class="dv">25</span>)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>get.df3 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span>.<span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span><span class="sc">*</span><span class="dv">4</span>, <span class="at">b0=</span><span class="dv">1</span><span class="sc">*</span><span class="dv">4</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>get.df4 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span><span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>get.df5 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span><span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span><span class="sc">*</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span><span class="sc">*</span>.<span class="dv">25</span>)</span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>get.df6 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span><span class="dv">1</span>, <span class="at">a0=</span>.<span class="dv">25</span><span class="sc">*</span><span class="dv">4</span>, <span class="at">b0=</span><span class="dv">1</span><span class="sc">*</span><span class="dv">4</span>)</span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a>get.df7 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span><span class="dv">10</span>, <span class="at">a0=</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span>)</span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>get.df8 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span><span class="dv">10</span>, <span class="at">a0=</span>.<span class="dv">25</span><span class="sc">*</span>.<span class="dv">25</span>, <span class="at">b0=</span><span class="dv">1</span><span class="sc">*</span>.<span class="dv">25</span>)</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a>get.df9 <span class="ot">&lt;-</span> <span class="fu">get.df</span>(<span class="at">n0=</span><span class="dv">10</span>, <span class="at">a0=</span>.<span class="dv">25</span><span class="sc">*</span><span class="dv">4</span>, <span class="at">b0=</span><span class="dv">1</span><span class="sc">*</span><span class="dv">4</span>)</span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a>my.df <span class="ot">&lt;-</span> <span class="fu">rbind</span>(get.df1, get.df2, get.df3, get.df4, get.df5, get.df6, get.df7, get.df8, get.df9)</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span> my.df, <span class="fu">aes</span>(<span class="at">x=</span>mu, <span class="at">y=</span>tau, <span class="at">fill=</span>color))<span class="sc">+</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_tile</span>() <span class="sc">+</span> </span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">facet_grid</span>(a0<span class="sc">+</span>b0<span class="sc">~</span>n0)<span class="sc">+</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_x_continuous</span>(<span class="at">expand=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))<span class="sc">+</span></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">expand=</span><span class="fu">c</span>(<span class="dv">0</span>,<span class="dv">0</span>))<span class="sc">+</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">x=</span><span class="fu">TeX</span>(<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">mu$&quot;</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>       <span class="at">y=</span><span class="fu">TeX</span>(<span class="st">&quot;$</span><span class="sc">\\</span><span class="st">tau$&quot;</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>       <span class="at">title=</span><span class="st">&quot;Normal-gamma density plots&quot;</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle=</span><span class="st">&quot;Column headers hold effective sample size. Row headers hold precision hyperparameters.&quot;</span>)<span class="sc">+</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(<span class="at">fill=</span>F)</span></code></pre></div>
+</div>
+<div id="prior-marginal-of-mu" class="section level3">
+<h3>Prior marginal of <span class="math inline">\(\mu\)</span></h3>
+<p>The prior marginal is derived as follows:</p>
+<p><span class="math display">\[\pi(\mu) \propto \int_{0}^\infty
+\pi(\mu,\tau) d\tau\]</span> <span class="math display">\[=
+\int_{0}^{\infty} \tau^{\alpha_{0}+1/2-1}exp(-\tau(\beta_0 +
+\frac{n_{0}(\mu-\mu_{0})^{2}}{2})) d\tau\]</span></p>
+<p>This is an unnormalized <span class="math inline">\(Ga(a=\alpha_{0} +
+1/2, b=\beta_{0} + \frac{n_{0}(\mu-\mu_{0})^2}{2})\)</span> distribution
+allowing us to write:</p>
+<p><span class="math display">\[\pi(\mu) \propto \frac{\Gamma(a)}{b^a}
+\propto b^{-a} = (\beta_{0}
++  \frac{n_{0}}{2}(\mu-\mu_{0})^{2})^{-\alpha_{0}-\frac{1}{2}}\]</span></p>
+<p><span class="math display">\[ = \left( 1 +
+\frac{1}{2\alpha_0}\frac{\alpha_{0}n_{0}(\mu-\mu_{0})^{2}}{\beta_{0}}\right)^{-(2
+\alpha_{0}+1)/2}\]</span></p>
+<p>Which is a <span class="math inline">\(T_{2\alpha_{0}}(\mu|\mu_{0},
+\beta_{0}/(\alpha_{0}n_{0}))\)</span></p>
+</div>
+<div id="students-t" class="section level3">
+<h3>Student’s t</h3>
+<p>Student’s t distribution can be generalized to a three parameter
+location-scale family introducing a location parameter <span class="math inline">\(\mu\)</span> and a scale parameter <span class="math inline">\(\sigma\)</span> through the relation <span class="math inline">\(X = \mu + \sigma T\)</span>. I.e., <span class="math inline">\((X - \mu)/\sigma \sim T(\nu)\)</span> with
+resulting probability density function:</p>
+<p><span class="math display">\[\pi(x | \nu, \mu,\sigma) =
+\frac{\Gamma(\frac{\nu+1}{2})}{\Gamma(\frac{\nu}{2})\sqrt{\pi\nu\sigma^2}}
+\left(1 + \frac{1}{\nu} \left( \frac{x-\mu}{\sigma} \right) ^2
+\right)^{-\frac{\nu+1}{2}} \]</span></p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data=</span><span class="fu">rbind</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a> <span class="fu">gcurve</span>(<span class="at">expr =</span> <span class="fu">dt_ls</span>(x,<span class="at">df=</span><span class="dv">10</span>, <span class="at">mu=</span><span class="dv">0</span>, <span class="at">sigma=</span><span class="dv">1</span>), <span class="at">from=</span><span class="sc">-</span><span class="dv">10</span>,<span class="at">to=</span><span class="dv">10</span>, </span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">n=</span><span class="dv">1001</span>, <span class="at">category =</span> <span class="st">&quot;df=10, mu=0, sigma=1&quot;</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a> <span class="fu">gcurve</span>(<span class="at">expr =</span> <span class="fu">dt_ls</span>(x, <span class="at">df=</span><span class="dv">10</span>, <span class="at">mu=</span><span class="dv">0</span>, <span class="at">sigma=</span><span class="dv">2</span>), <span class="at">from =</span> <span class="sc">-</span><span class="dv">10</span>, <span class="at">to=</span><span class="dv">10</span>, </span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>        <span class="at">n=</span><span class="dv">1001</span>, <span class="at">category =</span> <span class="st">&quot;df=10, mu=3, sigma=2&quot;</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a> <span class="fu">gcurve</span>(<span class="at">expr =</span> <span class="fu">dt_ls</span>(x, <span class="at">df=</span><span class="dv">10</span>, <span class="at">mu=</span><span class="dv">1</span>, <span class="at">sigma=</span><span class="dv">1</span>), <span class="at">from =</span> <span class="sc">-</span><span class="dv">10</span>, <span class="at">to=</span><span class="dv">10</span>, </span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">n=</span><span class="dv">1001</span>, <span class="at">category =</span> <span class="st">&quot;df=10, mu=3, sigma=1&quot;</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a> <span class="fu">gcurve</span>(<span class="at">expr =</span> <span class="fu">dt_ls</span>(x, <span class="at">df=</span><span class="dv">10</span>, <span class="at">mu=</span><span class="dv">2</span>, <span class="at">sigma=</span>.<span class="dv">5</span>), <span class="at">from =</span> <span class="sc">-</span><span class="dv">10</span>, <span class="at">to=</span><span class="dv">10</span>, </span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>        <span class="at">n=</span><span class="dv">1001</span>, <span class="at">category =</span> <span class="st">&quot;df=10, mu=3, sigma=0.5&quot;</span>)), </span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a> <span class="fu">aes</span>(<span class="at">x=</span>x,<span class="at">y=</span>y,<span class="at">color=</span>category)) <span class="sc">+</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a> <span class="fu">geom_line</span>(<span class="at">size=</span>.<span class="dv">75</span>) <span class="sc">+</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a> <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">&quot;bottom&quot;</span>) <span class="sc">+</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a> <span class="fu">labs</span>(<span class="at">title=</span><span class="st">&quot;Location-scale t-distributions&quot;</span>,<span class="at">color=</span><span class="cn">NULL</span>)</span></code></pre></div>
+</div>
+<div id="joint-posterior-of-mu-and-tau" class="section level3">
+<h3>Joint posterior of <span class="math inline">\(\mu\)</span> and
+<span class="math inline">\(\tau\)</span></h3>
+<p>A derivation of the joint posterior distribution leads to:</p>
+<p><span class="math display">\[\pi(\mu, \tau | D) \propto NG(\mu, \tau|
+\mu_{0}, n_{0}, \alpha_{0}, \beta_{0})\pi(D|\mu, \tau) \propto
+\tau^{1/2}
+\tau^{\alpha_{0}+n/2-1}exp(-\beta_{0}\tau)exp[(-\tau/2)(n_{0}(\mu -
+\mu_{0})^2 + \sum_{i} (x_i - \mu)^2)]\]</span></p>
+<p>Which can be simplifed to show</p>
+<p><span class="math display">\[\pi(\mu, \tau | D) = NG(\mu, \tau |
+\mu_n, n_n, \alpha_n, \beta_n)\]</span> where <span class="math display">\[\mu_n = \frac{n_{0}\mu_{0} +
+n\bar{x}}{n_{0}+n}\]</span> <span class="math display">\[n_{n} = n_{0} +
+n\]</span> <span class="math display">\[\alpha_{n} = \alpha_{0} +
+n/2\]</span> <span class="math display">\[\beta_{n} = \beta_{0} +
+\frac{1}{2} \sum_{i=1}^{n}(x_{i} - \bar{x})^2 + \frac{n_0 n(\bar{x} -
+\mu_{0})^2}{2(n_{0}+n)} = \beta_{0} + \frac{n-1}{2} s + \frac{n_0
+n(\bar{x} - \mu_{0})^2}{2(n_{0}+n)}\]</span></p>
+<p>Comment: the posterior sum of squares, <span class="math inline">\(\beta_{n}\)</span>, combines the prior sum of
+squares, the sample sum of squares, and a term due to the discrepancy
+between prior and sample means.</p>
+<p>The posterior marginals are then given by:</p>
+<p><span class="math display">\[\pi(\tau | D) = Ga(\tau | \alpha_{n},
+beta_{n})\]</span> <span class="math display">\[\pi(\mu|D) =
+T_{2\alpha_{n}}(\mu, \beta_{n}/(\alpha_{n}n_n)) \]</span></p>
+</div>
+<div id="posterior-marginals-are-given-by" class="section level3">
+<h3>Posterior marginals are given by</h3>
+<p><span class="math inline">\(\pi(\tau|D) \sim Gamma(\tau | \alpha_{n},
+\beta_{n})\)</span> <span class="math inline">\(\pi(\mu|D) \sim
+T_{2\alpha_{n}}(\mu|\mu_{n}, \beta_{n}/(\alpha_{n} n_{n}))\)</span></p>
+</div>
+<div id="the-marginal-likelihood" class="section level3">
+<h3>The marginal likelihood</h3>
+<p><span class="math display">\[\pi(D) =
+\frac{\Gamma(\alpha_{n})}{\Gamma(\alpha_{0})}
+\frac{\beta_{0}^{\alpha_{0}}} {\beta_{n}^{\alpha_{n}}}
+(\frac{n_{0}}{n_{n}})^{1/2}(2\pi)^{-n/2}\]</span></p>
+</div>
+<div id="the-posterior-predictive-distribution" class="section level3">
+<h3>The posterior predictive distribution</h3>
+<p>The posterior predictive distribution of m new observations given
+by:</p>
+<p><span class="math display">\[\pi(D_{new}|D) =
+\frac{\Gamma(\alpha_{n+m})}{\Gamma(\alpha_{n})}
+\frac{\beta_{n}^{\alpha_{n}}} {\beta_{n+m}^{\alpha_{n+m}}}
+(\frac{n_{n}}{n_{n+m}})^{1/2}(2\pi)^{-m/2}\]</span></p>
+<p>When m = 1, this is a T distribution:</p>
+<p><span class="math display">\[\pi(x|D) = T_{2\alpha_{n}}(x | \mu_{n},
+\frac{\beta_{n}(n_n+1)}{\alpha_{n}n_{n}})\]</span></p>
+</div>
+</div>
+<div id="distribution-theory-for-two-sample-normal-gamma-case" class="section level2">
+<h2>Distribution theory for two-sample normal-gamma case</h2>
+<p>Let prior for the PBO and TRT groups:</p>
+<ul>
+<li><span class="math inline">\(NG(\mu_{P}, \tau_{P}|\mu_{0,P}, n_{0,P},
+\alpha_{0,P}, \beta_{0,P})\)</span></li>
+<li><span class="math inline">\(NG(\mu_{T}, \tau_{T}|\mu_{0,T}, n_{0,T},
+\alpha_{0,T}, \beta_{0,T})\)</span></li>
+</ul>
+<p>Suppose the following are collected:</p>
+<ul>
+<li>Data for PBO: <span class="math inline">\(\bar{x}_{P}\)</span>,
+<span class="math inline">\(s_{P}\)</span>, based on <span class="math inline">\(n_{P}\)</span> observations</li>
+<li>Data for TRT: <span class="math inline">\(\bar{x}_{T}\)</span>,
+<span class="math inline">\(s_{T}\)</span>, based on <span class="math inline">\(n_{T}\)</span> observations</li>
+</ul>
+<p>Then the posteriors are given by:</p>
+<ul>
+<li><span class="math inline">\(NG(\mu, \tau | \mu_n, n_n, \alpha_n,
+\beta_n)\)</span></li>
+<li><span class="math inline">\(NG(\mu, \tau | \mu_n, n_n, \alpha_n,
+\beta_n)\)</span></li>
+</ul>
+<p>with</p>
+<ul>
+<li><span class="math inline">\(\mu_{n,P} = \frac{n_{0,P}\mu_{0,P} +
+n\bar{x}_{P}}{n_{0,P}+n_{P}}\)</span>,</li>
+<li><span class="math inline">\(n_{n,P} = n_{0,P} + n_{P}\)</span>,</li>
+<li><span class="math inline">\(\alpha_{n,P} = \alpha_{0,P} +
+n_{P}/2\)</span>,</li>
+<li><span class="math inline">\(\beta_{n,P} =\beta_{0,P} +
+\frac{n_{P}-1}{2} s_{P} + \frac{n_{0,P} n(\bar{x}_{P} -
+\mu_{0,P})^2}{2(n_{0,P}+n_{P})}\)</span>,</li>
+</ul>
+<p>and</p>
+<ul>
+<li><span class="math inline">\(\mu_{n,T} = \frac{n_{0,T}\mu_{0,T} +
+n\bar{x}_{T}}{n_{0,T}+n_{T}}\)</span>,</li>
+<li><span class="math inline">\(n_{n,T} = n_{0,T} + n_{T}\)</span>,</li>
+<li><span class="math inline">\(\alpha_{n,T} = \alpha_{0,T} +
+n_{T}/2\)</span>,</li>
+<li><span class="math inline">\(\beta_{n,T} =\beta_{0,T} +
+\frac{n_{T}-1}{2} s_{T} + \frac{n_{0,T} n(\bar{x}_{T} -
+\mu_{0,T})^2}{2(n_{0,T}+n_{T})}\)</span>.</li>
+</ul>
+<p>The marginal distributions of the means are then:</p>
+<ul>
+<li><span class="math inline">\(\pi(\mu_{P}|D_{P}) =
+T_{2\alpha_{n,{P}}}(\mu_{P},
+\beta_{n,P}/(\alpha_{n,P}n_{n,P}))\)</span></li>
+<li><span class="math inline">\(\pi(\mu_{T}|D_{T}) =
+T_{2\alpha_{n,{T}}}(\mu_{T},
+\beta_{n,T}/(\alpha_{n,T}n_{n,T}))\)</span></li>
+</ul>
+<p>If we wish to approximate the posterior probability, <span class="math inline">\(P(\mu_{T} - \mu_{P} &gt; z)\)</span>, we can
+sample M observations from each of <span class="math inline">\(\pi(\mu_{P}|D_{P})\)</span> and <span class="math inline">\(\pi(\mu_{T}|D_{T})\)</span>, compute M differences
+and observe the proportion exceeding z.</p>
+</div>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+<p>[1] Retzios AD. Why do so many Phase 3 clinical trials fail. Issues
+in Clinical Research: Bay Clinical R&amp;D Services. 2009:1-46. [2]
+Pretorius S. Phase III trial failures: costly, but preventable. Applied
+Clinical Trials. 2016 Aug 1;25(8/9):36. [3] Arrowsmith, J. Phase III and
+submission failures: 2007–2010. Nat Rev Drug Discov 10, 87 (2011). <a href="https://doi.org/10.1038/nrd3375" class="uri">https://doi.org/10.1038/nrd3375</a> [4] Pulkstenis E, Patra
+K, Zhang J. A Bayesian paradigm for decision-making in proof-of-concept
+trials. Journal of biopharmaceutical statistics. 2017 May
+4;27(3):442-56. [5] Sverdlov O, Ryeznik Y, Wu S. Exact Bayesian
+inference comparing binomial proportions, with application to
+proof-of-concept clinical trials. Therapeutic innovation &amp;
+regulatory science. 2015 Jan;49(1):163-74. [6] Kerman, J. (2011).
+Neutral noninformative and informative conjugate beta and gamma prior
+distributions. Electronic Journal of Statistics, 5, 1450-1470. [7] Tuyl,
+F., Gerlach, R. and Mengersen, K. (2008). A Comparison of Bayes-Laplace,
+Jeffreys, and Other Priors. The American Statistician, 62(1): 40-44. [8]
+Schmidli, H., Gsteiger, S., Roychoudhury, S., O’Hagan, A.,
+Spiegelhalter, D., &amp; Neuenschwander, B. (2014). Robust
+meta‐analytic‐predictive priors in clinical trials with historical
+control information. Biometrics, 70(4), 1023-1032. [9] Sebastian Weber
+(2020). RBesT: R Bayesian Evidence Synthesis Tools. R package version
+1.6-1. <a href="https://CRAN.R-project.org/package=RBesT" class="uri">https://CRAN.R-project.org/package=RBesT</a></p>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

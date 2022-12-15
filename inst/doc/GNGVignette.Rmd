@@ -1,0 +1,594 @@
+---
+title: "GNG Tools"
+date: "`r Sys.Date()`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{GNG Tools}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+# Intro
+
+Decision-making is critical throughout drug development, especially when establishing Proof of Concept (POC; e.g., phase 2) to enable large scale confirmatory programs (e.g., phase 3), which is critical for both the sponsor and the patients due to high stakes involved.
+However, it is noted that an initial POC finding may not be confirmed by later confirmatory trials.
+Historically, failure rates in confirmatory trials have been reported to be as high as 50%, with two-thirds of failures possibly attributed to poorly designed POC and unstructured End of POC decision making paradigms [1, 2, 3]:
+
+-   Traditionally, clinical trials, including POC trials, were designed to achieve statistical significance (i.e., oriented by individual trial success). With the limited scope in POC trials, such designs may result in the lack of evidence to inform a drug's commercial viability and the ability to fulfill unmet medical needs -- which may result in an unsuccessful confirmatory program.
+-   In addition, the sponsor normally had to wait until the end of a POC trial to review the evidence for a GO decision to proceed to confirmatory trials. The prolonged overall development timeline may lead to delayed fulfillment of unmet medical needs.
+
+# Go / No-Go
+
+Starting with the end in mind, the QED framework aims at designing the POC trials to assist with decision making at the close of the trial and a potential accelerated decision while evidence accumulates.
+The decision criteria employed a modified version of the one presented in Pulkstenis et al. (2017) [5].
+
+Let $\Delta$ be a single-valued parameter associated with the treatment effect, the proposed decision criteria link $\Delta$ with the compound/project-specific Target Product Profile (TPP) to determine where the compound shall be positioned to fulfill medical and commercial needs might also be considered.
+In order to weigh both external/historical data and POC results, a Bayesian framework is naturally utilized to quantify how likely the compound will meet the TPP.
+We denote:
+
+-   $TPP_{Min}$ as the minimal TPP, defined as the minimal treatment effect for acceptable efficacy or the 'dignity line', and
+-   $TPP_{Base}$ as the base TPP, defined as the base level of efficacy corresponding to the treatment effect for solid competitiveness or a change to standard of care.
+
+| Decision | Criteria                                                                                    |
+|-------------|----------------------------------------------------------|
+| Go       | $P(\Delta \geq TPP_{Min} > \tau_{Min})$ & $P(\Delta \geq TPP_{Base} > \tau_{Base})$         |
+| No-Go    | $P(\Delta \geq TPP_{Min} >\leq \tau_{NoGo})$ & $P(\Delta \geq TPP_{Base} \leq \tau_{Base})$ |
+| Consider | Otherwise                                                                                   |
+
+: Decision Rule Form
+
+Note that the posterior probability thresholds $\tau_{Base}$, $\tau_{Min}$ and $\tau_{NoGo}$ are pre-specified parameters, which collectively represent the company's risk tolerance level and are to be determined by the study team through considerations of the operating characteristics
+
+# Interim Decision making
+
+As mentioned earlier, in many clinical development programs, the POC study may only serve to guide the decision-making of whether we would proceed to the next stage of programs or not.
+The non-confirmatory nature of a POC study may enable an interim monitoring mechanism within this study, to accelerate the planning future program (e.g., initiate the planning for protocol design and regulatory interactions).
+These activities may shorten the overall development timeline, which can be critical in scenarios with unmet medical needs and/or with an increasingly competitive landscape.
+To be clear, a conclusion to 'Accelerate development' does not imply any changes to the conduct to the on-going study.
+
+In the present framework, the decision criteria employed at an interim extend the Bayesian framework by appealing to the posterior predictive probability that the data available at the end of POC (e.g., end of phase 2 [EOP2]) will meet the study end criteria specified above.
+This predictive probability conditions on the historical evidence (priors) and specifications of posterior predictive probability threshold for an acceleration to the next phase (e.g., phase 3) development, $\pi_{Go}$.
+In particular, with interim monitoring we declare the following decision criteria:
+
+| **Decision**           | Criteria at interim                        |
+|------------------------|--------------------------------------------|
+| Accelerate Development | P(Study-end Go Criteria met) \> $\pi_{Go}$ |
+| Wait for study-end     | Otherwise                                  |
+
+: Interim Decision-making
+
+In special cases such as facilitating downstream evaluation for out-licensing possibilities, an early decision not to proceed to the next phase may also be considered.  If so, one may consider the posterior predictive probability threshold $\pi_{NoGo}$ to fulfill such needs.  In our QED dashboards, this threshold value is set to null as the default setting but is capable to be activated to fulfill special needs. 
+
+Specifically, Monte Carlo simulations or direct calculation are employed to estimate these posterior predictive probabilities. Analogous to the posterior probability thresholds employed at the study-end, the posterior predictive probability threshold of $\pi_{Go}$ at interim monitoring is also pre-specified and needs to be calibrated by the statistician
+
+# Operating Characteristics
+
+Once the Min and Base TPP and priors have been identified, the statistician should work closely with the study team to propose initial posterior probability threshold values that meet the team’s risk tolerance. 
+In a Bayesian framework, the posterior probabilities are highly dependent on the amount of information available, which translates to the POC sample size and the timing of interim monitoring. Therefore, the posterior probability thresholds $\tau_{Base}$, $\tau_{Min}$ and $\tau_{NoGo}$ at the study-end, as well as $\pi_{Go}$ at interim monitoring (if applicable), shall be thoroughly evaluated and determined before the POC trial conduct to reflect the company’s risk tolerance level, and to optimize the parameter selection specifically under each design option. The statistician will also find it helpful to appeal to the Study-end Rule in Action tab. This tab helps the team understand what the minimum [maximum] observed treatment effect is to declare a Go [No-Go] at study-end. This provides an analog to the minimum detectable effect size one might provide to support sample size/power discussions.
+
+Using simulations, we quantify this optimization process by the operating characteristics (OC) of the decision criteria. Specifically, we evaluate:
+
+* OC against treatment effect: What the probability is to make a Go/No-Go decision under a specific sample size, when the underlying treatment effect is below, around, or above the TPPs.
+* OC against sample size: Whether the probability of making a Go/No-Go decision is sensitive to a sample size increase/decrease.
+* OC against interim monitoring: What the overall probability is to make a Go/No-Go decision, with interim monitoring at different timing. 
+
+
+# Case study 1
+
+Case Study 1 - Two-Sample Binary Case
+Let us work with the following assumptions (of note, these assumptions/parameters shall be determined cross-functionally):
+
+* Min TPP [Base TPP]: treatment difference = 15% [30%]
+* Posterior Probability Thresholds: $\tau_{Min} = 80%, \tau_{Base} = 10%, \tau_{NoGo} = 65%$
+* Hyperparameters: Uniform priors ($\alpha_c = \beta_c = \alpha_T = \beta_T = 1$)
+* Alternative hyperparameters: Jeffreys priors ($\alpha_c = \beta_c = \alpha_T = \beta_T = 1$) 
+* Observed data at study-end: $n_C=40, x_C=9, n_T=40, x_T=17$
+
+In this example, we wish to contrast the operating characteristics of the Jeffreys and Uniform priors in order to make the reader aware that these priors can lead to different conclusions. We do not advocate the use of one of these priors over another. Instead, we advocate a review of operating characteristics to understand if there are practical advantages to choosing one prior over the other.  The interested reader may find more discussion on the use of Jeffreys and Uniform priors in [7, 8]. Additionally, we discuss the incorporation of historic information in Section 6.3.
+
+## Rule in action plot with uniform priors
+
+```{r}
+
+```
+
+## Rule in action plot with Jeffreys' priors
+
+```{r}
+
+```
+
+# Study-end decision rule
+
+In this example, when uniform priors are utilized for the control and treatment response rates, the decision-rule leads to a ‘Consider’ conclusion for the Phase II data entered. 
+We are also alerted that the decision rule declares Go with 19 or more responders and No-Go with 16 or less responders. Had the Jeffreys prior been used, we would find that rule requires the same observed data for Go and No-Go decisions. Incidentally, if one updates the value τ_Base = 28%, one finds that rules based on Jeffreys prior and Uniform prior differ, requiring 19 and 20 responders respectively for a Go. (Try it!) 
+
+Of note, the exercise may be repeated if the team is considering alternate priors (say, for sensitivity assessments), especially when historical data are available to construct informative priors. 
+
+The reported decision interval flexes on the basis of how P(Δ ≥ Base TPP) compares to $\tau_{Base}$. 
+
+* When $P(\Delta ≥ Base TPP) > \tau_{Base}$ the decision interval reported is the asymmetric credible region with left tail coverage probability (1 - $\tau_{Min}$) and right tail coverage probability ($\tau_{Base}$)). I.e., the tail probabilities focus on those threshold associated with End of POC ‘Go’ criteria.
+* When $P(\Delta ≥ Base TPP) \leq \tau_{Base}$ the decision interval reported is the asymmetric credible region with left tail coverage probability (1 - $\tau_{NoGo}$) and right tail coverage probability ($\tau_{Base}$). I.e., the tail probabilities focus on those threshold associated with End of POC ‘No-Go’ criteria.
+* The motivation for this flexing decision interval is to provide a quick visual confirmation of the decision given the data.When a ‘No-Go’ decision is arises, the reported decision interval has an upper bound that is less than the Base TPP, while the lower bound of the interval extends below the Min TPP. 
+* Conversely, when a ‘Go’ decision arises, the reported decision interval has a lower bound that is greater than the Min TPP, while the upper bound of the interval extends above the Base TPP.
+* Otherwise, the decision falls into the “Consider” zone.
+
+## Study-end decision for this example
+
+Once the Min and Base TPP and priors have been identified the statistician should work closely with the study team to propose initial posterior probability threshold values that meet the team’s risk tolerance. Clinical knowledge and an understanding of the team’s risk tolerance are leveraged to identify thresholds that reflect the team’s expectation regarding what should be required for Go and No-Go decisions in terms of observed data.
+
+Note: In order to identify posterior probability thresholds for the study-end decision, users are encouraged to iterate between the Study-end Rule in Action tab, which provides information about what is required of the data in order to meet Go/No-Go as well as the corresponding treatment effect operating characteristics, which provides the likelihood of achieving Go/No-Go when the underlying control group's response rate is held fixed and treatment effect increases (see the next section). 
+
+# Treatment effect OC
+
+Let us work with the following assumptions:
+•	Control rate: 22%
+•	Randomization ratio: 1 so that (Control:Treatment) = (1 : TRT) = 1:1
+–	If treatment sample size is twice [half] of control sample size use 2 [0.5].
+
+We see that when the underlying control responder rate is 22%, a treatment effect of 15% (equivalent to treatment responder rate of 22% + 15% = 37%), the likelihood of a Go decision at study end is less than 20%. As the treatment effect increases to 30%, the likelihood of a Go decision at study end increases to roughly 75%. 
+This figure provides the same information as the previous picture, although it is arguable easier to pick off each of values from the y-axis for each decision type.
+
+## Treatment effect OC for this example
+
+```{r}
+
+```
+
+
+# Sample size OC
+
+Similarly, we’d also like to evaluate the sample size operating characteristics, which provides the likelihood of achieving Go/No-Go when the underlying effect in both groups are held at fixed scenarios and the sample size increases.
+
+Let us work with the following assumptions:
+
+* Control rate: 22%
+* Randomization ratio: 1 so that (Control:Treatment) = (1 : TRT) = 1:1
+* User defined effect of interest: 25%
+* Lower [Upper] Bounds to be shown on the graph: 40 [160]
+* $n_{points}$ = 15
+
+Note the number of points, $n_{points}$, is used to span the sample size to be simulated between the Lower and Upper bounds, which increases computation time to create the OC curves. It is recommended the user work with a smaller number of points, with bounds chosen to reflect extremes being considered. 
+
+## Sample size figure for this example
+
+The figure allows one to assess how the likelihood of decisions change as a function of total sample size. The User defined effect represents any special value of interest (if any), which complements the default output that sets the treatment effect to 0 (Null case) and the Min and Base TPP values.
+
+# Interim Decision Heatmap
+
+In practice, the assumptions and parameters are determined cross-functionally with the statistician leading such discussions. Let us work with the following assumptions. 
+* As noted in Section 3.0, by default, the ‘Do not Accelerate threshold’ is left unchecked, as this function is only kept to fulfill the potential needs in special situations where an early decision not to proceed to the next phase may be considered.
+* Thresholds for posterior predictive probabilities: $\pi_{Go}$ = 80% (See note below.)
+* No threshold is defined for a ‘do not accelerate threshold’, the default value as discussed in section 3.0.
+* Planned maximum sample size: Control: 40, Treatment: 40
+* Planned interims: Set control and treatment sample sizes to: 11, 20, 26
+
+## Interim Decision heatmap for this example
+
+Suppose at the 2nd interim we observe 5 successes in the control group out of 20. The figure then informs: 12 or greater success (60%) would lead to a Go. The user should check this vs. study-end requirements:
+
+Relative to study end, we see that the 2nd interim requires more stringent evidence (in terms of demanding a smaller observed treatment sample proportion) for a No-Go (35% vs. 40%) and also more stringent evidence (in terms of greater observed treatment sample proportion) for a Go (60% vs. 47.5%). This is as expected, since we’d like to have more stringent criteria to accommodate the variability from pre-mature data at the interim. The user can calibrate the Go with the help of the treatment operating characteristics offered next.
+A note on the choice of thresholds for posterior predictive probabilities: Please remember that this posterior predictive probability is associated with the probability (given prior and interim data) that the study-end Go Criteria is met.  It behooves the statistician to a) determine what sorts of observed data leads to achieving such posterior predictive probabilities at the interims and b) what impact that observed data might have on the probability of subsequent confirmatory trial success. In other words, in addition to the consideration of a risk tolerance level regarding a discrepant decision at interim against as if a decision is to be made at the end of POC, there could be additional impacts to the downstream confirmatory study design (based on assumption from interim instead of final POC data).  For example, an exercise designed to determine the sample size of confirmatory trial might include comparisons of: 
+
+* Power vs. Sample size under current assumptions
+* Probability of success (i.e., power averaged over the team’s current POC prior) in the confirmatory trial made at POC design stage, interim, and end of POC along with accumulated POC data.
+
+In short, the statistician should be cognizant of the impact an early Go decision might have on subsequent uses of the POC data.
+
+
+# Operating Characteristics as a Function of Treatment Effect with Interim Decision
+
+The first figure offered contrasts the operating characteristics at study end vs. any analysis. Note that the study end components of these figures are run independently of those from the treatment OC tab, so expect to see minor differences. Increasing the number of simulations should ameliorate the differences at the cost of computation time. 
+The dotted line in this figure provides operating characteristics associated with ‘Any analyses. This should be interpreted in a way that respects the chronology of the analyses and contrasted with the description offered in the next subsection: The first analysis which leads to a definitive conclusion (such as ‘Accelerate’ at an interim or ‘Go’ at study end) dictates the outcome of this analysis. In this way, the study-end results are called on only when each interim has returned a consider. Said differently, subsequent analyses never ‘overrule’ a definitive call from earlier interim monitoring. 
+
+## Interim graphics
+
+### Treatment Effect Operating Curves by Each Analysis
+
+These figures offer a view of how interim monitoring performs in isolation; additionally, Study End results are viewed in isolation. The results for ‘Any Interim’ and ‘Any Analysis’ follow along lines previously described, in that it is the first non-Consider decision that drives classification.
+
+Some common features that are expected in such figures: 
+* Interims with smaller sample sizes, will typically have lower probability of an ‘accelerate’ result.
+* ‘Any interim’ will have a higher probability of ‘Accelerate’ compared to individual interims (which are evaluated without regard for other interims).
+The figure below provided the same information as the previous figure in a different presenting mode (i.e., separate instead of stacked probabilities).
+
+# Two-sample continuous case
+
+
+In this example, suppose we have prior information for control worth 10 observations. This is reflected both in our use of the normal-gamma’s effective sample size, n_0,C = 10, and gamma parameters, αC = 2.5, C = 10 below. Additionally assume we wish to have a non-informative prior for treatment mean, and a relatively uninformative prior for the precision,  n_0,T = 0.0001, αT = 0.25, βT = 1.0.  (It is worth noting that the gamma portions for the control and treatment share the same expected value, but with different variances.) In this way, let us work with the following assumptions:
+
+* Min TPP: treatment difference = 1.5
+* Base TPP: treatment difference = 3.0
+* Thresholds: $\tau_{Min} = 80%, \tau_{Base} = 20%, \tau_{NoGo} = 65%$
+* Hyperparameters for Control: $\mu_{0,C}=0, n_{0,C} = 10, \alpha_C = 2.5, \beta_C = 10$,
+* Hyperparameters for Treatment: $\mu_{0,T}=0,  n_{0,T} = 0.0001, \alpha_T = 0.25, \beta_T = 1.0$
+* Observed data: $\bar{x}_C=1.4, s_C=4, n_c=40, \bar{x}_{T}=3.25, s_t=4, n_T=40$
+
+## Joint prior/posterior
+
+A series of figures assist the user with specification of the prior hyperparameters. The joint densities for prior/posterior normal-gamma distributions are offered.
+
+The marginal t-distributions obtained from integrating out the precision terms are offered.
+
+Additional figures not provided here include:
+
+* Marginal precision plots based on gamma distributions
+* Prior precision, variance and standard deviation plots are offered to help translate intuition associated with standard deviation into the precision scale.
+* Finally, numeric summaries are offered.
+
+# Study-end rule in action
+
+The Study-end Decision Rule in Action plot in this case is based on Monte Carlo integration of the treatment differences obtained by considering the differences obtained between draws from marginal t-distributions associated with the control and treatment arms.
+
+Note that this plot is conditional on the data entered for the control group Phase II data. The subtitle suggests, holding control data and treatment sample size and variability fixed, a treatment mean of 2.53 or larger is needed for Go while a treatment mean of 1.1 or less is needed for No-Go.  The amounts to an observed difference of 2.53 - (-0.5) = 2.83 and (1.1 - (-0.5)) = 1.6 (again, assuming the same control data is encountered). 
+
+The actual observed treatment effect (i.e., the difference of observed sample means between treatment and control) required for a Go/No-Go is influenced by hyperparameters and observed data from the control group. Recall that by stipulating $n_{0,C} = n_{0,T} = 1, we impart an informative prior on the mean. You will notice that lines are not parallel in the figure. For purpose of exaggerating the effect, consider the impact of replacing $n_{0,C} = n_{0,T} = 10. This is akin to suggesting that we have evidence that the mean in each group is equal to $\mu_{0,C}=\mu_{0,T}=0$ and this evidence is worth 10 observations on each group. As a result of using an informative prior, we can see from the Study-end GNG plot that as observed control mean increases from -2, to 5.5, the required observed treatment effect to make a GO decision decreases from values larger than 3.6 to values closer to 2.0.  
+
+If a non-informative prior is used (take $n_{0,C} = n_{0,T} = 0.0001$) then we would observe parallel lines in graphs, suggesting that the observed control mean plays no role in the observed treatment effect required for Go and No-Go. (Try it!)
+
+
+# Treatment effect OC
+
+Let us work with the following assumptions:
+
+* Randomization ratio: 1 (Control:Treatment = 1:TRT) for equal randomization
+* Control Mean: 0.25
+* $s_C$: 1.5, $s_T$: 1.5
+* $n_{points}: 15, MC size: 1000
+* Total Sample Size: 55
+* Lower Bound: 0.5, Upper Bound: 4
+
+# sample size OC
+
+Let us work with the following assumptions:
+
+* User’s TPP: 2.5
+* Lower [Upper] sample size bounds: 40 [120]
+
+It is important to recall that the Go and No-Go decisions are based by applying thresholds to posterior probabilities.  As a function of sample size, the posterior probabilities may tend towards 0%, 100% or some value in between. It is important not to project expectations we have associated with notions of power to such a figure.
+
+
+# Operating Characteristics as a Function of Treatment Effect with Interim Decision
+
+For demonstration purposes, we also considered an accelerated decision of not proceeding to the next phase (i.e., $\pi_{No-Go}$) in this example. 
+Let us work with the following assumptions:
+
+* Check the box: Add ‘Do not Accelerate’ threshold
+* Interim threshold for Go and No-Go: $\pi_Go = 60%, \pi_{No-Go} = 60%$
+* Planned maximum sample size: $n_C = n_T = 55$
+* Planned interims (Common for Control and Treatment): (18, 27, 36)
+* Underling control mean: 0.25 
+* Control SD: 1.5, Treatment SD: 1.5
+* $n_points$ for Look-up table: 20
+   + Step size for lookup table. The smaller the step size, the greater precision in determining study-end Go and No-go cutoffs.
+* MC size for Look-up Table: 500
+   + Number of MC trials used when estimating the look-up table.
+* $n_points$ for Simulation: 30
+   + The number of points over the simulation grid to run simulations. The larger the number of points, the longer the calculation time.
+* MC size for simulation: 1000
+   + The number of trials run at each simulation point.
+
+Since the observed treatment effect required for Go and No-Go may change depending on choice of hyperparameters and assumed control group mean, a figure augmenting OC curves when treatment effect is set to user’s control mean ± control standard deviation is provided.  (Recall: under a non-informative prior, these should be similar. Under a non-informative prior, this figure can help determine if $n_points$ for look-up table, $n_points$ for simulation, and their corresponding MC sizes are sufficiently large.) The following figure reflects the 2nd figure offered by the Shiny application. The 1st figure, provides a focused view of the center panel which reflects the user’s choice of underlying control mean.
+
+Finally, we provide one of two versions of the treatment effect OC curves providing a variety of views: OCs at each interim and Study-end (without regard for other analyses), and OCs for Any Interim and Any Analysis which are based on the first interim analysis that leads to an ‘Accelerate’ or ‘Do not Accelerate’ conclusion at an interim based on exceeding predictive probabilities thresholds, or in the case where all interims have us continue, the Study-end decision based on posterior probabilities.
+
+
+# Working with HRs > 1
+
+The time-to-event functions are set up to handle the standard case where hazard ratios less than 1 indicate efficacy. Suppose instead a team has preference to Go for larger HR values and No-go for small HR values. Consider the following example where the Base TPP = 1.4 and the Min TPP = 1.2 on the HR scale.
+
+First transform the problem by interchanging role of PBO and TRT. This converts as follows:
+
+* Base TPP --> Base HR = 1/1.4 = .714 and,
+* Min TPP --> Max TPP = 1/1.2 = 0.833
+
+Next, working with the decision rule in this setting as we normally would lead to
+
+* Go if: $P(HR \leq 0.833) > \tau_{Max}$ & $P(HR < 0.714) > \tau_{Base}$ and
+* No-Go if: $P(HR ≤0.833) \leq \tau_{No-Go}$ & $P(HR < 0.714) \leq \tau_{Base}$
+
+We can communicate this rule in terms of the team's preferred scale as follows:
+
+Go if: $P(HR \leq 0.833) = P(1/HR > 1.2) > \tau_{Max} & P(HR < .714) = P(1/HR ≥ 1.4) > \tau_{Base}$
+No-Go if: $P(HR \leq 0.833)$ = $P(1/HR > 1.2) \leq \tau_{No-Go}$ & $P(HR < .714) = P(1/HR ≥ 1.4) \leq \tau_{Base}$
+
+
+# Borrowing external info
+
+Several methods exist for implementing historic borrowing and many of these (e.g., use of dynamic power priors, creating synthetic controls from patient level data, robust meta-analytic priors) fall beyond the scope of the applications. When leveraging historical data, cautions should be used to accommodate the between trial variability. The user can, however, explore notions of historic borrowing with fixed discounting through specification of priors. In this way a user can explore the impact of prior specification on performance of rules. Additionally, such comparisons might augment internal confidence in a traditionally designed study. E.g., one might contrast performance of Go and No-Go rules using non-informative priors (which may be more aligned with how the study was designed) with performance of rules that leverage historic data via historic priors. Here we consider the use of informative priors for placebo arm only. Let p $\in$ [0, 1] be the fixed discounting percentage.
+
+
+## Discounted priors
+
+### Binary Case
+
+Suppose we have binary historic data from x responders among n subjects. We can envisage discounted priors by manipulating the sample size while maintaining the value of the sample proportion of responders x/(n – x).
+
+General Prior: $Beta(\alpha, \beta)$.
+Discounted Borrowing: $Beta(\alpha + px, \beta + p(n – x))$
+
+### Continuous Case
+
+Suppose we have historic data from n subjects summarized by sample mean and sample standard deviation. We can envisage discounted priors by manipulating the sample size while maintaining the historic estimates for mean and standard deviation.
+
+General Prior: $NG(\mu_0,n_0,\alpha_0,\beta_0 )$
+Discounted Borrowing: $NG((n_0 \mu_0+pn\bar{x})/(n_0+pn),n_0+pn,\alpha_0+pn/2,\beta_0+(pn-1)/2 s+(n_0 pn(\barx-\mu_0 )^2)/(2(n_0+pn)))$
+
+Time-to-event Case
+Suppose we have historic data providing an estimate of the hazard ratio based on m events. We can envisage discounted priors by manipulating the sample size while maintaining the historic estimates for the hazard ratio.
+
+General Prior: $N(log(\widehat{HR})), 4/m_{0})$
+Discounted Borrowing:  $N(log(\widehat{HR})), 4/(pm_{0} +m))$
+
+# Distribution Theory
+
+## Distribution theory
+
+### The one-sample binary problem with beta prior
+
+Let $\theta_{TRT}$ be the proportion of responders among the treated subjects in a one-arm trial and assume larger values of $\theta_{TRT}$ are associated with treatment benefit. Standard updating of conjugate prior is used:
+
+* Prior: Let $\pi(\theta_{TRT}) \sim Beta(\alpha_{TRT}, \beta_{TRT})$.
+* Data: Assume that $x$ responders are observed among $n$ treated subjects. 
+* Posterior: $\pi(\theta_{TRT} | x,n) \sim Beta(\alpha_{TRT} + x, \beta_{TRT} + (n-x))$.
+
+In general, decision rules based on the posterior distribution of $\theta_{TRT}$ are thus based on straightforward appeals to a Beta distribution. E.g., $P(\theta > \theta_{TV}| x, n)$ can be computed readily. Indeed, a call to stats::pbeta is used by DecisionHeatMaps::get.binary.ss.df to return a data.frame holding posterior probabilities for subsequent heatmap production.
+
+### Two-sample binary problem via the difference in population proportions
+
+Consider a clinical trial comparing Treatment vs. Control. We wish to compare true response rates $\pi_{PBO}$ and $\pi_{TRT}$. Let $\theta = \pi_{PBO} - \pi_{TRT}$. As described above, priors for each component are given by beta distributions:
+
+* $\pi(\pi_{PBO}) \sim Beta(\alpha_{PBO}, \beta_{PBO})$
+* $\pi(\pi_{TRT}) \sim Beta(\alpha_{TRT}, \beta_{TRT})$
+
+Observed data on each arm arise from independent binomial experiments:
+
+* $n = (n_{PBO}, n_{TRT})$: number of subjects on each arm of study
+* $x = (x_{PBO}, x_{TRT})$: number of subjects that respond
+
+Individual posteriors are given by canonical updating of the conjugate beta prior with binomial data:
+
+* $\pi(\pi_{PBO} | n_{PBO}, x_{PBO}) \sim Beta(\alpha_{PBO} + x_{PBO}, \beta_{PBO} + (n_{PBO} - x_{PBO}))$
+* $\pi(\pi_{TRT} | n_{TRT}, x_{TRT}) \sim Beta(\alpha_{TRT} + x_{TRT}, \beta_{TRT} + (n_{TRT} - x_{TRT}))$
+
+Sverdlov et al. (2015) detail the direct probability calculations of the cumulative distribution function of the risk difference, $\theta = \pi_{PBO} - \pi_{TRT}$, and note that: 
+
+$$F_{\theta}(t) = P(\theta \leq t) = 
+ \begin{cases}
+  \int_{-t}^{1} F_{\pi_{PBO}}(t+u)f_{\pi_{TRT}}(u)du & -1 \leq t \leq0;\\
+  \int_{0}^{1-t}F_{\pi_{PBO}}(t+u)f_{\pi_{TRT}}(u)du + \int_{1-t}^{1}f_{\pi_{TRT}}(u)du & 0 \leq t \leq 1. \end{cases}$$
+  
+which upon taking t = 0 simplifies to 
+
+$$P(\pi_{PBO} \leq \pi_{TRT}) = \int_{0}^{1-t}F_{\pi_{PBO}}(t+u)f_{\pi_{TRT}}(u)du.$$
+
+See Sverdlov et al. for more on this derivation including a reference to Kawasaki et al. describing an analytic expression and derivations for the relative risk and odds ratio. The function DecisionHeatMaps::get.binary.ts.post, employed by DecisionHeatMaps::get.binary.ts.df, computes the posterior probability associated with the difference of two in proportions via MC sampling. 
+
+
+# One- and two-sample normal problem with unknown variance 
+
+We choose to work in the two-sample normal with unknown variance because we wish to embrace the Bayesian ideal of incorporating our uncertainty. As such, we should avoid the simplifying assumptions used for elementary statistical problems: The notion that we know the variance while making inference on the mean is best saved for the classroom. One should be forced to justify the assumption that variances are unknown and but equal: if our standing hypothesis is that drug should impact the mean and we are well aware of notions of non-response and non-compliance to drug the more reasonable assumption is variation across doses should not be common.
+
+## Distribution theory for one-sample normal-gamma case
+
+### Likelihood function
+
+Let $D = {x_{1}, x_{2}, ..., x_{n}}$ be an i.i.d. sample whose distribution, conditional on unknown mean $\mu$ and unknown precision $\tau = \sigma^{-2}$ is normal with likelihood expressed as:
+
+$$\pi(D|\mu, \tau) = \frac{1}{(2\pi)^{n/2}}\tau^{n/2}exp(-\frac{\tau}{2}\sum_{i=1}^{n}(x_{i} - \mu)^2)$$
+
+### Conjugate prior distribution
+
+The conjugate prior is the Normal-Gamma defined as:
+
+$$NG(\mu, \tau|\mu_{0}, n_{0}, \alpha_{0}, \beta_{0}) = N(\mu|\mu_{0}, precision=(n_{0}\tau)^{-1})Ga(\tau|\alpha_{0}, rate=\beta_{0})$$
+
+Which can be expressed as
+
+$$NG(\mu, \tau|\mu_{0}, n_{0}, \alpha_{0}, \beta_{0}) = \frac{1}{Z_{NG}}\tau^{\alpha_{0} - 1/2}exp(-\frac{\tau}{2}[n_{0}(\mu-\mu_{0})^{2}+2\beta_{0}])$$
+
+where
+
+$$Z_{NG}(\mu_{0}, n_{0}, \alpha_{0}, \beta_{0}) = \frac{\Gamma(\alpha_{0})}{\beta_{0}^{\alpha_{0}}}\left(\frac{2\pi}{n_{0}}\right)^{1/2}$$
+
+### Gaining familiarity with the normal-gamma density
+
+The function DecisionHeatMaps::dnorgam returns the density of the normal-gamma. Suppose that expected observed standard devatiations will be around 2, so that variance is around 4 and precision is around 0.25. (We should recall Jensen's inequality here!) Recall that marginal distribution of the precision parameter is a gamma distribution. The expected values and variance of a gamma distribution with shape and rate parameters, $\alpha$ and $\beta$ respectively, is given by:
+
+* $E(X) = \frac{\alpha}{\beta}$
+* $Var(X) = \frac{\alpha}{\beta^2}$
+
+The family of gamma distributions with expected values of 0.25 are thus given by Gamma(0.25c, c). These will lead to expected values of 0.25 and variances of 0.25/c. The effective sample size together with choice of c combine to determine the peakedness of the Normal Gamma distribution. In order to gain familiarity with the normal-gamma prior, consider the following nine densities:
+
+* NG(0, 0.1, 0.25c, 1c), c = 0.25, 1, 4 
+* NG(0, 1.0, 0.25c, 1c), c = 0.25, 1, 4 
+* NG(0, 10, 0.25c, 1c), c = 0.25, 1, 4 
+
+```{r eval=F}
+get.df <- function(n0=.1, a0=.25, b0=1){
+  my.df <- expand.grid(tau=seq(0.1,1,.01), mu=seq(-15,15,.01))
+  my.df$dens <- dnorgam(mu=my.df$mu, tau=my.df$tau, mu0=0, n0=n0, a0=a0, b0=1)
+  my.df$color <- as.numeric(cut((my.df$dens),50))
+  my.df$n0=n0
+  my.df$a0=a0
+  my.df$b0=b0
+  return(my.df)
+}
+
+get.df1 <- get.df(n0=.1, a0=.25, b0=1)
+get.df2 <- get.df(n0=.1, a0=.25*.25, b0=1*.25)
+get.df3 <- get.df(n0=.1, a0=.25*4, b0=1*4)
+get.df4 <- get.df(n0=1, a0=.25, b0=1)
+get.df5 <- get.df(n0=1, a0=.25*.25, b0=1*.25)
+get.df6 <- get.df(n0=1, a0=.25*4, b0=1*4)
+get.df7 <- get.df(n0=10, a0=.25, b0=1)
+get.df8 <- get.df(n0=10, a0=.25*.25, b0=1*.25)
+get.df9 <- get.df(n0=10, a0=.25*4, b0=1*4)
+my.df <- rbind(get.df1, get.df2, get.df3, get.df4, get.df5, get.df6, get.df7, get.df8, get.df9)
+```
+
+```{r, eval =F, fig.cap="Normal Gamma Density Plots"}
+ggplot(data= my.df, aes(x=mu, y=tau, fill=color))+
+  geom_tile() + 
+  facet_grid(a0+b0~n0)+
+  scale_x_continuous(expand=c(0,0))+
+  scale_y_continuous(expand=c(0,0))+
+  labs(x=TeX("$\\mu$"),
+       y=TeX("$\\tau$"),
+       title="Normal-gamma density plots",
+       subtitle="Column headers hold effective sample size. Row headers hold precision hyperparameters.")+
+  guides(fill=F)
+```
+
+### Prior marginal of $\mu$ 
+
+The prior marginal is derived as follows: 
+
+$$\pi(\mu) \propto \int_{0}^\infty \pi(\mu,\tau) d\tau$$
+$$= \int_{0}^{\infty} \tau^{\alpha_{0}+1/2-1}exp(-\tau(\beta_0 + \frac{n_{0}(\mu-\mu_{0})^{2}}{2})) d\tau$$
+
+This is an unnormalized $Ga(a=\alpha_{0} + 1/2, b=\beta_{0} + \frac{n_{0}(\mu-\mu_{0})^2}{2})$ distribution allowing us to write:
+
+$$\pi(\mu) \propto \frac{\Gamma(a)}{b^a} \propto b^{-a} = (\beta_{0} +  \frac{n_{0}}{2}(\mu-\mu_{0})^{2})^{-\alpha_{0}-\frac{1}{2}}$$
+
+
+$$ = \left( 1 + \frac{1}{2\alpha_0}\frac{\alpha_{0}n_{0}(\mu-\mu_{0})^{2}}{\beta_{0}}\right)^{-(2 \alpha_{0}+1)/2}$$
+
+Which is a $T_{2\alpha_{0}}(\mu|\mu_{0}, \beta_{0}/(\alpha_{0}n_{0}))$
+
+### Student's t
+
+Student's t distribution can be generalized to a three parameter location-scale family introducing a location parameter $\mu$ and a scale parameter $\sigma$ through the relation $X = \mu + \sigma T$. I.e., $(X - \mu)/\sigma \sim T(\nu)$ with resulting probability density function:
+
+$$\pi(x | \nu, \mu,\sigma) = \frac{\Gamma(\frac{\nu+1}{2})}{\Gamma(\frac{\nu}{2})\sqrt{\pi\nu\sigma^2}} \left(1 + \frac{1}{\nu} \left( \frac{x-\mu}{\sigma} \right) ^2 \right)^{-\frac{\nu+1}{2}} $$
+
+```{r, eval=F, fig.cap="Location-scale t-distributions"}
+ggplot(data=rbind(
+ gcurve(expr = dt_ls(x,df=10, mu=0, sigma=1), from=-10,to=10, 
+        n=1001, category = "df=10, mu=0, sigma=1"),
+ gcurve(expr = dt_ls(x, df=10, mu=0, sigma=2), from = -10, to=10, 
+        n=1001, category = "df=10, mu=3, sigma=2"),
+ gcurve(expr = dt_ls(x, df=10, mu=1, sigma=1), from = -10, to=10, 
+        n=1001, category = "df=10, mu=3, sigma=1"),
+ gcurve(expr = dt_ls(x, df=10, mu=2, sigma=.5), from = -10, to=10, 
+        n=1001, category = "df=10, mu=3, sigma=0.5")), 
+ aes(x=x,y=y,color=category)) +
+ geom_line(size=.75) +
+ theme(legend.position = "bottom") +
+ labs(title="Location-scale t-distributions",color=NULL)
+```
+
+### Joint posterior of $\mu$ and $\tau$
+
+A derivation of the joint posterior distribution leads to:
+
+$$\pi(\mu, \tau | D) \propto NG(\mu, \tau| \mu_{0}, n_{0}, \alpha_{0}, \beta_{0})\pi(D|\mu, \tau) \propto \tau^{1/2} \tau^{\alpha_{0}+n/2-1}exp(-\beta_{0}\tau)exp[(-\tau/2)(n_{0}(\mu - \mu_{0})^2 + \sum_{i} (x_i - \mu)^2)]$$
+
+Which can be simplifed to show 
+
+$$\pi(\mu, \tau | D) = NG(\mu, \tau | \mu_n, n_n, \alpha_n, \beta_n)$$ where
+$$\mu_n = \frac{n_{0}\mu_{0} + n\bar{x}}{n_{0}+n}$$
+$$n_{n} = n_{0} + n$$
+$$\alpha_{n} = \alpha_{0} + n/2$$
+$$\beta_{n} = \beta_{0} + \frac{1}{2} \sum_{i=1}^{n}(x_{i} - \bar{x})^2 + \frac{n_0 n(\bar{x} - \mu_{0})^2}{2(n_{0}+n)} = \beta_{0} + \frac{n-1}{2} s + \frac{n_0 n(\bar{x} - \mu_{0})^2}{2(n_{0}+n)}$$
+
+Comment: the posterior sum of squares, $\beta_{n}$, combines the prior sum of squares, the sample sum of squares, and a term due to the discrepancy between prior and sample means. 
+
+The posterior marginals are then given by:
+
+$$\pi(\tau | D) = Ga(\tau | \alpha_{n}, beta_{n})$$
+$$\pi(\mu|D) = T_{2\alpha_{n}}(\mu, \beta_{n}/(\alpha_{n}n_n)) $$
+
+### Posterior marginals are given by
+
+$\pi(\tau|D) \sim Gamma(\tau | \alpha_{n}, \beta_{n})$
+$\pi(\mu|D) \sim T_{2\alpha_{n}}(\mu|\mu_{n}, \beta_{n}/(\alpha_{n} n_{n}))$
+
+### The marginal likelihood
+
+$$\pi(D) = \frac{\Gamma(\alpha_{n})}{\Gamma(\alpha_{0})} \frac{\beta_{0}^{\alpha_{0}}} {\beta_{n}^{\alpha_{n}}} (\frac{n_{0}}{n_{n}})^{1/2}(2\pi)^{-n/2}$$
+
+### The posterior predictive distribution 
+
+The posterior predictive distribution of m new observations given by:
+
+$$\pi(D_{new}|D) = \frac{\Gamma(\alpha_{n+m})}{\Gamma(\alpha_{n})} \frac{\beta_{n}^{\alpha_{n}}} {\beta_{n+m}^{\alpha_{n+m}}} (\frac{n_{n}}{n_{n+m}})^{1/2}(2\pi)^{-m/2}$$
+
+When m = 1, this is a T distribution:
+
+$$\pi(x|D) = T_{2\alpha_{n}}(x | \mu_{n}, \frac{\beta_{n}(n_n+1)}{\alpha_{n}n_{n}})$$
+
+## Distribution theory for two-sample normal-gamma case
+
+Let prior for the PBO and TRT groups:
+
+* $NG(\mu_{P}, \tau_{P}|\mu_{0,P}, n_{0,P}, \alpha_{0,P}, \beta_{0,P})$
+* $NG(\mu_{T}, \tau_{T}|\mu_{0,T}, n_{0,T}, \alpha_{0,T}, \beta_{0,T})$
+
+Suppose the following are collected:
+
+* Data for PBO: $\bar{x}_{P}$, $s_{P}$, based on $n_{P}$ observations
+* Data for TRT: $\bar{x}_{T}$, $s_{T}$, based on $n_{T}$ observations
+
+Then the posteriors are given by:
+
+* $NG(\mu, \tau | \mu_n, n_n, \alpha_n, \beta_n)$
+* $NG(\mu, \tau | \mu_n, n_n, \alpha_n, \beta_n)$
+
+with
+
+* $\mu_{n,P} = \frac{n_{0,P}\mu_{0,P} + n\bar{x}_{P}}{n_{0,P}+n_{P}}$,
+* $n_{n,P} = n_{0,P} + n_{P}$,
+* $\alpha_{n,P} = \alpha_{0,P} + n_{P}/2$,
+* $\beta_{n,P} =\beta_{0,P} + \frac{n_{P}-1}{2} s_{P} + \frac{n_{0,P} n(\bar{x}_{P} - \mu_{0,P})^2}{2(n_{0,P}+n_{P})}$,
+
+and 
+
+* $\mu_{n,T} = \frac{n_{0,T}\mu_{0,T} + n\bar{x}_{T}}{n_{0,T}+n_{T}}$,
+* $n_{n,T} = n_{0,T} + n_{T}$,
+* $\alpha_{n,T} = \alpha_{0,T} + n_{T}/2$,
+* $\beta_{n,T} =\beta_{0,T} + \frac{n_{T}-1}{2} s_{T} + \frac{n_{0,T} n(\bar{x}_{T} - \mu_{0,T})^2}{2(n_{0,T}+n_{T})}$.
+
+The marginal distributions of the means are then:
+
+* $\pi(\mu_{P}|D_{P}) = T_{2\alpha_{n,{P}}}(\mu_{P}, \beta_{n,P}/(\alpha_{n,P}n_{n,P}))$
+* $\pi(\mu_{T}|D_{T}) = T_{2\alpha_{n,{T}}}(\mu_{T}, \beta_{n,T}/(\alpha_{n,T}n_{n,T}))$
+
+If we wish to approximate the posterior probability, $P(\mu_{T} - \mu_{P} > z)$, we can sample M observations from each of $\pi(\mu_{P}|D_{P})$ and $\pi(\mu_{T}|D_{T})$, compute M differences and observe the proportion exceeding z.
+
+
+
+# References
+
+[1] Retzios AD. Why do so many Phase 3 clinical trials fail.
+Issues in Clinical Research: Bay Clinical R&D Services.
+2009:1-46.
+[2] Pretorius S. Phase III trial failures: costly, but preventable.
+Applied Clinical Trials.
+2016 Aug 1;25(8/9):36.
+[3] Arrowsmith, J. Phase III and submission failures: 2007--2010.
+Nat Rev Drug Discov 10, 87 (2011).
+<https://doi.org/10.1038/nrd3375> [4] Pulkstenis E, Patra K, Zhang J. A Bayesian paradigm for decision-making in proof-of-concept trials.
+Journal of biopharmaceutical statistics.
+2017 May 4;27(3):442-56.
+[5] Sverdlov O, Ryeznik Y, Wu S. Exact Bayesian inference comparing binomial proportions, with application to proof-of-concept clinical trials.
+Therapeutic innovation & regulatory science.
+2015 Jan;49(1):163-74.
+[6] Kerman, J.
+(2011).
+Neutral noninformative and informative conjugate beta and gamma prior distributions.
+Electronic Journal of Statistics, 5, 1450-1470.
+[7] Tuyl, F., Gerlach, R.
+and Mengersen, K.
+(2008).
+A Comparison of Bayes-Laplace, Jeffreys, and Other Priors.
+The American Statistician, 62(1): 40-44.
+[8] Schmidli, H., Gsteiger, S., Roychoudhury, S., O'Hagan, A., Spiegelhalter, D., & Neuenschwander, B.
+(2014).
+Robust meta‐analytic‐predictive priors in clinical trials with historical control information.
+Biometrics, 70(4), 1023-1032.
+[9] Sebastian Weber (2020).
+RBesT: R Bayesian Evidence Synthesis Tools.
+R package version 1.6-1.
+<https://CRAN.R-project.org/package=RBesT>
